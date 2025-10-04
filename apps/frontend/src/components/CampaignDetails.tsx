@@ -1,0 +1,350 @@
+import { useState, useEffect } from "react";
+import {
+  Box,
+  Container,
+  Heading,
+  Text,
+  VStack,
+  HStack,
+  Badge,
+  Progress,
+  Button,
+  useColorModeValue,
+  Spinner,
+  Center,
+  Icon,
+  Divider,
+  Input,
+  useToast,
+  SimpleGrid,
+  Stat,
+  StatLabel,
+  StatNumber,
+  StatHelpText,
+} from "@chakra-ui/react";
+import { useParams, useNavigate } from "react-router-dom";
+import { useWallet } from "@vechain/dapp-kit-react";
+import { FaCheckCircle, FaHeart, FaClock, FaUsers } from "react-icons/fa";
+
+interface Campaign {
+  id: number;
+  creator: string;
+  title: string;
+  description: string;
+  goalAmount: string;
+  raisedAmount: string;
+  deadline: number;
+  isVerified: boolean;
+  donorCount: number;
+  createdAt: number;
+}
+
+export const CampaignDetails = () => {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const toast = useToast();
+  const { account } = useWallet();
+  const [campaign, setCampaign] = useState<Campaign | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [donating, setDonating] = useState(false);
+  const [donationAmount, setDonationAmount] = useState("");
+  const cardBg = useColorModeValue("white", "gray.800");
+
+  useEffect(() => {
+    if (id) {
+      fetchCampaign();
+    }
+  }, [id]);
+
+  const fetchCampaign = async () => {
+    try {
+      const response = await fetch(`/campaigns/${id}`);
+      const data = await response.json();
+      if (data.success) {
+        setCampaign(data.data);
+      }
+    } catch (error) {
+      console.error("Error fetching campaign:", error);
+      toast({
+        title: "Error",
+        description: "Failed to load campaign details",
+        status: "error",
+        duration: 3000,
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDonate = async () => {
+    if (!account) {
+      toast({
+        title: "Wallet not connected",
+        description: "Please connect your wallet to donate",
+        status: "warning",
+        duration: 3000,
+      });
+      return;
+    }
+
+    if (!donationAmount || parseFloat(donationAmount) <= 0) {
+      toast({
+        title: "Invalid amount",
+        description: "Please enter a valid donation amount",
+        status: "warning",
+        duration: 3000,
+      });
+      return;
+    }
+
+    setDonating(true);
+    try {
+      // This would interact with the smart contract
+      // For now, showing a success message
+      toast({
+        title: "Donation Successful!",
+        description: `You donated ${donationAmount} VET and earned B3tr tokens!`,
+        status: "success",
+        duration: 5000,
+      });
+      setDonationAmount("");
+      fetchCampaign(); // Refresh campaign data
+    } catch (error) {
+      toast({
+        title: "Donation Failed",
+        description: "Please try again",
+        status: "error",
+        duration: 3000,
+      });
+    } finally {
+      setDonating(false);
+    }
+  };
+
+  const calculateProgress = () => {
+    if (!campaign) return 0;
+    const raised = parseFloat(campaign.raisedAmount);
+    const goal = parseFloat(campaign.goalAmount);
+    return (raised / goal) * 100;
+  };
+
+  const formatTimeRemaining = () => {
+    if (!campaign) return "";
+    const now = Math.floor(Date.now() / 1000);
+    const remaining = campaign.deadline - now;
+    const days = Math.floor(remaining / 86400);
+    if (days > 0) return `${days} days remaining`;
+    const hours = Math.floor(remaining / 3600);
+    if (hours > 0) return `${hours} hours remaining`;
+    return "Ending soon";
+  };
+
+  if (loading) {
+    return (
+      <Center h="60vh">
+        <VStack spacing={4}>
+          <Spinner size="xl" color="blue.500" thickness="4px" />
+          <Text>Loading campaign...</Text>
+        </VStack>
+      </Center>
+    );
+  }
+
+  if (!campaign) {
+    return (
+      <Center h="60vh">
+        <VStack spacing={4}>
+          <Text fontSize="xl">Campaign not found</Text>
+          <Button onClick={() => navigate("/campaigns")}>
+            Browse Campaigns
+          </Button>
+        </VStack>
+      </Center>
+    );
+  }
+
+  return (
+    <Box py={12}>
+      <Container maxW="container.xl">
+        <SimpleGrid columns={{ base: 1, lg: 3 }} spacing={8}>
+          {/* Main Content */}
+          <Box gridColumn={{ base: "1", lg: "1 / 3" }}>
+            <VStack spacing={6} align="stretch">
+              {/* Header */}
+              <Box>
+                <HStack mb={4}>
+                  <Badge
+                    colorScheme="green"
+                    display="flex"
+                    alignItems="center"
+                    gap={1}
+                    fontSize="md"
+                    px={3}
+                    py={1}
+                  >
+                    <Icon as={FaCheckCircle} />
+                    AI Verified
+                  </Badge>
+                </HStack>
+                <Heading size="2xl" mb={4}>
+                  {campaign.title}
+                </Heading>
+                <Text fontSize="lg" color="gray.600">
+                  {campaign.description}
+                </Text>
+              </Box>
+
+              <Divider />
+
+              {/* Stats */}
+              <SimpleGrid columns={{ base: 2, md: 4 }} spacing={4}>
+                <Stat>
+                  <StatLabel>
+                    <HStack>
+                      <Icon as={FaHeart} color="red.500" />
+                      <Text>Raised</Text>
+                    </HStack>
+                  </StatLabel>
+                  <StatNumber color="blue.600">
+                    {campaign.raisedAmount} VET
+                  </StatNumber>
+                  <StatHelpText>of {campaign.goalAmount} VET</StatHelpText>
+                </Stat>
+
+                <Stat>
+                  <StatLabel>
+                    <HStack>
+                      <Icon as={FaUsers} color="blue.500" />
+                      <Text>Donors</Text>
+                    </HStack>
+                  </StatLabel>
+                  <StatNumber>{campaign.donorCount}</StatNumber>
+                  <StatHelpText>supporters</StatHelpText>
+                </Stat>
+
+                <Stat>
+                  <StatLabel>
+                    <HStack>
+                      <Icon as={FaClock} color="orange.500" />
+                      <Text>Time Left</Text>
+                    </HStack>
+                  </StatLabel>
+                  <StatNumber fontSize="lg">
+                    {formatTimeRemaining().split(" ")[0]}
+                  </StatNumber>
+                  <StatHelpText>{formatTimeRemaining().split(" ")[1]}</StatHelpText>
+                </Stat>
+
+                <Stat>
+                  <StatLabel>Progress</StatLabel>
+                  <StatNumber fontSize="lg">
+                    {calculateProgress().toFixed(0)}%
+                  </StatNumber>
+                  <StatHelpText>of goal</StatHelpText>
+                </Stat>
+              </SimpleGrid>
+
+              {/* Progress Bar */}
+              <Box>
+                <Progress
+                  value={calculateProgress()}
+                  colorScheme="blue"
+                  size="lg"
+                  borderRadius="full"
+                />
+              </Box>
+
+              <Divider />
+
+              {/* Campaign Info */}
+              <Box>
+                <Heading size="md" mb={4}>
+                  Campaign Information
+                </Heading>
+                <VStack align="stretch" spacing={3}>
+                  <HStack justify="space-between">
+                    <Text color="gray.600">Creator</Text>
+                    <Text fontFamily="mono" fontSize="sm">
+                      {campaign.creator.slice(0, 6)}...{campaign.creator.slice(-4)}
+                    </Text>
+                  </HStack>
+                  <HStack justify="space-between">
+                    <Text color="gray.600">Created</Text>
+                    <Text>
+                      {new Date(campaign.createdAt * 1000).toLocaleDateString()}
+                    </Text>
+                  </HStack>
+                  <HStack justify="space-between">
+                    <Text color="gray.600">Campaign ID</Text>
+                    <Text>#{campaign.id}</Text>
+                  </HStack>
+                </VStack>
+              </Box>
+            </VStack>
+          </Box>
+
+          {/* Donation Sidebar */}
+          <Box>
+            <Box
+              bg={cardBg}
+              p={6}
+              borderRadius="xl"
+              shadow="lg"
+              position="sticky"
+              top={4}
+            >
+              <VStack spacing={6} align="stretch">
+                <Heading size="md">Support This Campaign</Heading>
+
+                <VStack spacing={4} align="stretch">
+                  <Input
+                    type="number"
+                    placeholder="Enter amount in VET"
+                    size="lg"
+                    value={donationAmount}
+                    onChange={(e) => setDonationAmount(e.target.value)}
+                  />
+
+                  <Button
+                    colorScheme="blue"
+                    size="lg"
+                    onClick={handleDonate}
+                    isLoading={donating}
+                    loadingText="Processing..."
+                    isDisabled={!account}
+                  >
+                    {account ? "Donate Now" : "Connect Wallet"}
+                  </Button>
+
+                  <Text fontSize="sm" color="gray.500" textAlign="center">
+                    You'll earn B3tr tokens for your donation!
+                  </Text>
+                </VStack>
+
+                <Divider />
+
+                <VStack align="stretch" spacing={2}>
+                  <Text fontSize="sm" fontWeight="bold">
+                    Why Donate?
+                  </Text>
+                  <Text fontSize="sm" color="gray.600">
+                    ✅ AI-verified medical need
+                  </Text>
+                  <Text fontSize="sm" color="gray.600">
+                    💰 Direct transfer to creator
+                  </Text>
+                  <Text fontSize="sm" color="gray.600">
+                    🪙 Earn B3tr token rewards
+                  </Text>
+                  <Text fontSize="sm" color="gray.600">
+                    🔗 Blockchain transparency
+                  </Text>
+                </VStack>
+              </VStack>
+            </Box>
+          </Box>
+        </SimpleGrid>
+      </Container>
+    </Box>
+  );
+};

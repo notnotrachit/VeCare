@@ -1,12 +1,14 @@
 import { DAppKitProvider } from "@vechain/dapp-kit-react";
-import { ChakraProvider, Container, Flex } from "@chakra-ui/react";
+import { ChakraProvider, Box } from "@chakra-ui/react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import {
-  Dropzone,
-  Footer,
-  InfoCard,
-  Instructions,
   Navbar,
-  SubmissionModal,
+  Footer,
+  HomePage,
+  CampaignBrowser,
+  CreateCampaign,
+  CampaignDetails,
+  CreatorDashboard,
 } from "./components";
 import { lightTheme } from "./theme";
 
@@ -20,27 +22,21 @@ function App() {
         nodeUrl="https://testnet.vechain.org/"
         logLevel={"DEBUG"}
       >
-        <Navbar />
-        <Flex flex={1}>
-          <Container
-            mt={{ base: 4, md: 10 }}
-            maxW={"container.xl"}
-            mb={{ base: 4, md: 10 }}
-            display={"flex"}
-            flex={1}
-            alignItems={"center"}
-            justifyContent={"flex-start"}
-            flexDirection={"column"}
-          >
-            <InfoCard />
-            <Instructions />
-            <Dropzone />
-          </Container>
-        </Flex>
-        <Footer />
-
-        {/* MODALS  */}
-        <SubmissionModal />
+        <Router>
+          <Box minH="100vh" display="flex" flexDirection="column">
+            <Navbar />
+            <Box flex={1}>
+              <Routes>
+                <Route path="/" element={<HomePage />} />
+                <Route path="/campaigns" element={<CampaignBrowser />} />
+                <Route path="/campaigns/:id" element={<CampaignDetails />} />
+                <Route path="/create" element={<CreateCampaign />} />
+                <Route path="/dashboard" element={<CreatorDashboard />} />
+              </Routes>
+            </Box>
+            <Footer />
+          </Box>
+        </Router>
       </DAppKitProvider>
     </ChakraProvider>
   );

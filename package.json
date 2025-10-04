@@ -13,7 +13,9 @@
     "contracts:deploy:solo": "turbo run deploy:solo",
     "contracts:deploy:testnet": "turbo run deploy:testnet",
     "contracts:solo-up": "turbo run solo-up",
-    "contracts:solo-down": "turbo run solo-down"
+    "contracts:solo-down": "turbo run solo-down",
+    "vecare:deploy:solo": "turbo run vecare:deploy:solo",
+    "vecare:deploy:testnet": "turbo run vecare:deploy:testnet"
   },
   "devDependencies": {
     "eslint": "^8.57.0",

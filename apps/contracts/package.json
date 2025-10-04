@@ -8,6 +8,8 @@
         "compile": "npx hardhat compile",
         "deploy:solo": "npx hardhat run scripts --network vechain_solo",
         "deploy:testnet": "npx hardhat run scripts --network vechain_testnet",
+        "vecare:deploy:solo": "npx hardhat run scripts/deploy-vecare.ts --network vechain_solo",
+        "vecare:deploy:testnet": "npx hardhat run scripts/deploy-vecare.ts --network vechain_testnet",
         "solo-up": "make solo-up",
         "solo-down": "make solo-down"
     },
