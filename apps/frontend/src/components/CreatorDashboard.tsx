@@ -22,6 +22,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { useWallet } from "@vechain/dapp-kit-react";
 import { FaTrophy, FaHeart, FaCheckCircle, FaStar } from "react-icons/fa";
+import { API_ENDPOINTS } from "../config/api";
 
 interface CreatorProfile {
   totalCampaigns: number;
@@ -49,7 +50,7 @@ export const CreatorDashboard = () => {
 
   const fetchProfile = async () => {
     try {
-      const response = await fetch(`/creators/${account}`);
+      const response = await fetch(API_ENDPOINTS.creators(account!));
       const data = await response.json();
       if (data.success) {
         setProfile(data.data);

@@ -30,53 +30,30 @@ export class MedicalVerificationService {
       }
     }
 
-    const prompt = `
-You are an AI medical document verification system for VeCare Chain, a medical crowdfunding platform.
+    const prompt = `Analyze this medical document and return ONLY a JSON object with this exact structure:
 
-Analyze the provided medical document(s) carefully. Your task is to verify authenticity and legitimacy.
-
-VERIFICATION CRITERIA:
-1. **Document Authenticity**: 
-   - Is this a genuine medical document (doctor's letter, hospital bill, prescription, diagnosis report, etc.)?
-   - Does it contain proper medical letterhead, stamps, or official markings?
-   - Are there visible signs of tampering or manipulation?
-
-2. **Medical Legitimacy**:
-   - Does it contain legitimate medical information (diagnosis, treatment plan, cost estimates)?
-   - Are medical terms used correctly and appropriately?
-   - Does the document appear professionally formatted?
-
-3. **Credibility Indicators**:
-   - Doctor/Hospital name and credentials visible?
-   - Date of issue present?
-   - Patient information (can be redacted for privacy)?
-   - Medical facility contact information?
-
-4. **Red Flags** (if any):
-   - Screenshot or photo of a screen (not original document)
-   - Poor quality or heavily edited
-   - Inconsistent information
-   - Missing critical elements
-   - Suspicious formatting or language
-
-RESPONSE FORMAT:
-Respond ONLY with a valid JSON object (no markdown, no code blocks):
 {
-  "isVerified": boolean, // true if document passes verification, false otherwise
-  "confidenceScore": number, // 0.0 to 1.0, your confidence in the verification
-  "documentType": string, // e.g., "Doctor's Letter", "Hospital Bill", "Prescription", "Diagnosis Report"
-  "findings": [string], // list of positive findings that support authenticity
-  "reasoning": string, // brief explanation of your decision (2-3 sentences, user-friendly)
-  "redFlags": [string] // list of concerns or red flags (empty array if none)
+  "isVerified": true or false,
+  "confidenceScore": 0.0 to 1.0,
+  "documentType": "type of document",
+  "findings": ["finding 1", "finding 2"],
+  "reasoning": "brief explanation",
+  "redFlags": ["red flag 1"] or []
 }
 
-IMPORTANT:
-- Be thorough but not overly strict
-- Consider that documents may be scanned or photographed
-- Focus on genuine medical need verification, not perfect document quality
-- A confidenceScore above 0.7 with no major red flags should result in isVerified: true
-- Provide clear, empathetic reasoning that respects the sensitive nature of medical situations
-`;
+Verification criteria:
+1. Is this a genuine medical document (doctor's letter, hospital bill, prescription, diagnosis report)?
+2. Does it contain medical information (diagnosis, treatment, costs)?
+3. Are there credibility indicators (doctor name, date, hospital info)?
+4. Any red flags (screenshot, poor quality, inconsistencies)?
+
+Rules:
+- confidenceScore above 0.7 with no major red flags = isVerified: true
+- Be lenient with scanned/photographed documents
+- Focus on medical need verification
+- Keep reasoning brief and empathetic
+
+CRITICAL: Return ONLY the JSON object. No explanations, no markdown, no code blocks. Just the raw JSON.`;
 
     try {
       // For multiple images, analyze the first one (can be extended to analyze all)
@@ -87,17 +64,50 @@ IMPORTANT:
         prompt,
       });
 
-      const responseJSONStr = openAIHelper.getResponseJSONString(gptResponse);
-      const result = openAIHelper.parseChatGPTJSONString(responseJSONStr) as MedicalVerificationResult;
+      let responseJSONStr = openAIHelper.getResponseJSONString(gptResponse);
+      
+      // Clean up the response - remove markdown code blocks if present
+      responseJSONStr = responseJSONStr.trim();
+      if (responseJSONStr.startsWith('```json')) {
+        responseJSONStr = responseJSONStr.replace(/^```json\s*/, '').replace(/```\s*$/, '');
+      } else if (responseJSONStr.startsWith('```')) {
+        responseJSONStr = responseJSONStr.replace(/^```\s*/, '').replace(/```\s*$/, '');
+      }
+      
+      // Try to parse the JSON
+      let result: MedicalVerificationResult;
+      try {
+        result = JSON.parse(responseJSONStr) as MedicalVerificationResult;
+      } catch (parseError) {
+        console.error('Failed to parse AI response:', responseJSONStr);
+        console.error('Parse error:', parseError);
+        
+        // Return a safe default response
+        return {
+          isVerified: false,
+          confidenceScore: 0.3,
+          documentType: 'Unknown',
+          findings: [],
+          reasoning: 'Unable to verify document. The AI response could not be processed. Please try uploading a clearer image of your medical document.',
+          redFlags: ['AI verification system returned an invalid response']
+        };
+      }
 
       // Validate response structure
       if (!result || typeof result.isVerified !== 'boolean' || typeof result.confidenceScore !== 'number') {
-        throw new HttpException(500, 'Invalid AI verification response');
+        console.error('Invalid AI response structure:', result);
+        throw new HttpException(500, 'Invalid AI verification response structure');
       }
 
       return result;
     } catch (error) {
       console.error('Medical verification error:', error);
+      
+      // If it's already an HttpException, rethrow it
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      
       throw new HttpException(500, 'Error during medical document verification');
     }
   }

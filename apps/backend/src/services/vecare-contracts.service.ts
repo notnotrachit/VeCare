@@ -57,19 +57,34 @@ export class VeCareContractsService {
         return { success: false };
       }
 
-      // Extract campaign ID from events
-      const campaignCreatedEvent = result.outputs?.[0]?.events?.find(
-        (e: any) => e.event === 'CampaignCreated'
-      );
+      // Extract campaign ID from event topics
+      // The CampaignCreated event has the campaign ID as the second topic (topics[1])
+      let campaignId: number | undefined;
       
-      const campaignId = campaignCreatedEvent?.args?.campaignId 
-        ? Number(campaignCreatedEvent.args.campaignId) 
-        : undefined;
+      if (result.outputs && result.outputs.length > 0) {
+        const events = (result.outputs[0] as any).events;
+        if (events && events.length > 0) {
+          // Find the CampaignCreated event
+          const campaignCreatedEvent = events.find((e: any) => 
+            e.topics && e.topics.length >= 2
+          );
+          
+          if (campaignCreatedEvent && campaignCreatedEvent.topics) {
+            // Campaign ID is in topics[1] as a hex string
+            const campaignIdHex = campaignCreatedEvent.topics[1];
+            campaignId = parseInt(campaignIdHex, 16);
+          }
+        }
+      }
+
+      const txId = (result.meta as any)?.txID || undefined;
+
+      console.log('Campaign created successfully. Campaign ID:', campaignId, 'TX:', txId);
 
       return {
         success: true,
         campaignId,
-        txId: result.txid,
+        txId,
       };
     } catch (error) {
       console.error('Error creating campaign:', error);

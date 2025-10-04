@@ -23,8 +23,11 @@ import {
   StatHelpText,
 } from "@chakra-ui/react";
 import { useParams, useNavigate } from "react-router-dom";
-import { useWallet } from "@vechain/dapp-kit-react";
+import { useWallet, useConnex } from "@vechain/dapp-kit-react";
 import { FaCheckCircle, FaHeart, FaClock, FaUsers } from "react-icons/fa";
+import { API_ENDPOINTS } from "../config/api";
+import { VECARE_SOL_ABI, config } from "@repo/config-contract";
+import { unitsUtils, abi as abiUtils } from "@vechain/sdk-core";
 
 interface Campaign {
   id: number;
@@ -44,6 +47,7 @@ export const CampaignDetails = () => {
   const navigate = useNavigate();
   const toast = useToast();
   const { account } = useWallet();
+  const connex = useConnex();
   const [campaign, setCampaign] = useState<Campaign | null>(null);
   const [loading, setLoading] = useState(true);
   const [donating, setDonating] = useState(false);
@@ -58,7 +62,7 @@ export const CampaignDetails = () => {
 
   const fetchCampaign = async () => {
     try {
-      const response = await fetch(`/campaigns/${id}`);
+      const response = await fetch(API_ENDPOINTS.campaign(Number(id)));
       const data = await response.json();
       if (data.success) {
         setCampaign(data.data);
@@ -99,20 +103,77 @@ export const CampaignDetails = () => {
 
     setDonating(true);
     try {
-      // This would interact with the smart contract
-      // For now, showing a success message
+      // Convert VET to Wei
+      const amountInWei = unitsUtils.parseUnits(donationAmount, 'ether');
+      
+      // Encode the donate function call using VeChain SDK
+      const donateFunction = new abiUtils.Function(
+        VECARE_SOL_ABI.find((item: any) => item.name === 'donate' && item.type === 'function')
+      );
+      const encodedData = donateFunction.encodeInput([campaign!.id]);
+      
+      // Create contract clause for donation
+      const clause = {
+        to: config.VECARE_CONTRACT_ADDRESS,
+        value: amountInWei.toString(),
+        data: encodedData,
+      };
+
+      // Send transaction using Connex
+      if (!connex) {
+        throw new Error('Please connect your wallet');
+      }
+
+      const result = await connex.vendor
+        .sign('tx', [clause])
+        .signer(account)
+        .comment(`Donate ${donationAmount} VET to campaign: ${campaign!.title}`)
+        .request();
+
       toast({
-        title: "Donation Successful!",
-        description: `You donated ${donationAmount} VET and earned B3tr tokens!`,
-        status: "success",
-        duration: 5000,
+        title: "Transaction Sent!",
+        description: "Waiting for confirmation...",
+        status: "info",
+        duration: 3000,
       });
-      setDonationAmount("");
-      fetchCampaign(); // Refresh campaign data
-    } catch (error) {
+
+      // Wait for transaction receipt
+      const receipt = await connex.thor.transaction(result.txid).getReceipt();
+      
+      if (receipt) {
+        console.log('Transaction receipt:', receipt);
+        
+        // Check if transaction was successful
+        if (receipt.reverted) {
+          console.error('Transaction reverted:', receipt);
+          throw new Error('Transaction reverted');
+        }
+        
+        toast({
+          title: "Donation Successful!",
+          description: `You donated ${donationAmount} VET and earned B3tr tokens!`,
+          status: "success",
+          duration: 5000,
+        });
+        setDonationAmount("");
+        fetchCampaign(); // Refresh campaign data
+      } else {
+        // No receipt yet, but transaction was sent - assume success for now
+        console.log('No receipt available yet, but transaction sent');
+        toast({
+          title: "Transaction Sent!",
+          description: `Your donation of ${donationAmount} VET is being processed. Check the explorer for status.`,
+          status: "info",
+          duration: 5000,
+        });
+        setDonationAmount("");
+        fetchCampaign(); // Refresh campaign data
+      }
+    } catch (error: any) {
+      console.error('Donation error:', error);
       toast({
         title: "Donation Failed",
-        description: "Please try again",
+        description: error.message || "Please try again",
         status: "error",
         duration: 3000,
       });

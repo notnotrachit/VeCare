@@ -16,11 +16,15 @@ export const ValidateEnv = () => {
     LOG_FORMAT: str({ devDefault: 'prod' }),
     LOG_DIR: str({ devDefault: '../logs' }),
     REWARD_AMOUNT: str({ devDefault: '1' }),
-    ADMIN_MNEMONIC: str(),
+    ADMIN_MNEMONIC: str({ default: '' }),
+    ADMIN_PRIVATE_KEY: str({ default: '' }),
     NETWORK_URL: str({ devDefault: 'http://localhost:8669' }),
     NETWORK_TYPE: str({ devDefault: 'solo' }),
     OPENAI_API_KEY: openApiKey(),
     MAX_FILE_SIZE: str({ devDefault: '10mb' }),
     ADMIN_ADDRESS: str({ default: '' }),
+    PINATA_API_KEY: str({ default: '' }),
+    PINATA_API_SECRET: str({ default: '' }),
+    PINATA_GATEWAY: str({ default: 'https://gateway.pinata.cloud' }),
   });
 };

@@ -17,6 +17,7 @@ import {
 } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 import { FaCheckCircle, FaHeart } from "react-icons/fa";
+import { API_ENDPOINTS } from "../config/api";
 
 interface Campaign {
   id: number;
@@ -42,8 +43,7 @@ export const CampaignBrowser = () => {
 
   const fetchCampaigns = async () => {
     try {
-      // Replace with actual API call
-      const response = await fetch("/campaigns/active/verified");
+      const response = await fetch(API_ENDPOINTS.activeVerified);
       const data = await response.json();
       if (data.success) {
         setCampaigns(data.data);

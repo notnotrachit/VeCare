@@ -32,6 +32,12 @@
     },
     "solo-down": {
       "cache": false
+    },
+    "vecare:deploy:solo": {
+      "dependsOn": ["^build"]
+    },
+    "vecare:deploy:testnet": {
+      "dependsOn": ["^build"]
     }
   }
 }

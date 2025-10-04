@@ -13,5 +13,9 @@ export const { MAX_FILE_SIZE } = validatedEnv;
 export const { ADMIN_MNEMONIC, ADMIN_ADDRESS } = validatedEnv;
 export const { NETWORK_URL, NETWORK_TYPE } = validatedEnv;
 export const { REWARD_AMOUNT } = validatedEnv;
+export const { PINATA_API_KEY, PINATA_API_SECRET, PINATA_GATEWAY } = validatedEnv;
 
-export const ADMIN_PRIVATE_KEY = mnemonic.derivePrivateKey(ADMIN_MNEMONIC.split(' '));
+// Support both mnemonic and private key
+export const ADMIN_PRIVATE_KEY = validatedEnv.ADMIN_PRIVATE_KEY 
+  ? validatedEnv.ADMIN_PRIVATE_KEY 
+  : (validatedEnv.ADMIN_MNEMONIC ? mnemonic.derivePrivateKey(validatedEnv.ADMIN_MNEMONIC.split(' ')) : '');

@@ -23,6 +23,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { useWallet } from "@vechain/dapp-kit-react";
 import { FaUpload, FaCheckCircle } from "react-icons/fa";
+import { API_ENDPOINTS } from "../config/api";
 
 export const CreateCampaign = () => {
   const navigate = useNavigate();
@@ -69,7 +70,7 @@ export const CreateCampaign = () => {
 
     setVerifying(true);
     try {
-      const response = await fetch("/verify-documents", {
+      const response = await fetch(API_ENDPOINTS.verifyDocuments, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ medicalDocuments }),
@@ -122,11 +123,14 @@ export const CreateCampaign = () => {
 
     setLoading(true);
     try {
-      const response = await fetch("/campaigns", {
+      const response = await fetch(API_ENDPOINTS.campaigns, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          ...formData,
+          title: formData.title,
+          description: formData.description,
+          goalAmount: formData.goalAmount,
+          durationDays: parseInt(formData.durationDays),
           medicalDocuments,
           creatorAddress: account,
         }),

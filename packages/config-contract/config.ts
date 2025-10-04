@@ -5,9 +5,10 @@ export const config = {
   "X2EARN_APPS": "0xcB23Eb1bBD5c07553795b9538b1061D0f4ABA153",
   "APP_ID": "0xfa5e2023057d5dba74b1dae41cafb2eac7c999f00bd0ceaf67c38695359242a2",
   "CYCLE_DURATION": 60480,
-  "MAX_SUBMISSIONS_PER_CYCLE": 10
+  "MAX_SUBMISSIONS_PER_CYCLE": 10,
+  "VECARE_CONTRACT_ADDRESS": "0xce625a00f33dd6bb6691903f010dc39504284781"
 };
-export const ECO_SOL_ABI = [
+export const VECARE_SOL_ABI = [
   {
     "inputs": [
       {
@@ -19,16 +20,6 @@ export const ECO_SOL_ABI = [
         "internalType": "address",
         "name": "_x2EarnRewardsPoolContract",
         "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_cycleDuration",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_maxSubmissionsPerCycle",
-        "type": "uint256"
       },
       {
         "internalType": "bytes32",
@@ -66,8 +57,120 @@ export const ECO_SOL_ABI = [
       {
         "indexed": true,
         "internalType": "uint256",
-        "name": "cycle",
+        "name": "campaignId",
         "type": "uint256"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "creator",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "title",
+        "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "goalAmount",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "deadline",
+        "type": "uint256"
+      }
+    ],
+    "name": "CampaignCreated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "campaignId",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "updateMessage",
+        "type": "string"
+      }
+    ],
+    "name": "CampaignUpdated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "campaignId",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "bool",
+        "name": "verified",
+        "type": "bool"
+      }
+    ],
+    "name": "CampaignVerified",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "campaignId",
+        "type": "uint256"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "donor",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "b3trReward",
+        "type": "uint256"
+      }
+    ],
+    "name": "DonationReceived",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "campaignId",
+        "type": "uint256"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "creator",
+        "type": "address"
       },
       {
         "indexed": false,
@@ -76,33 +179,7 @@ export const ECO_SOL_ABI = [
         "type": "uint256"
       }
     ],
-    "name": "ClaimedAllocation",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "newDuration",
-        "type": "uint256"
-      }
-    ],
-    "name": "CycleDurationUpdated",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "cycleStartBlock",
-        "type": "uint256"
-      }
-    ],
-    "name": "CycleStarted",
+    "name": "FundsWithdrawn",
     "type": "event"
   },
   {
@@ -186,17 +263,17 @@ export const ECO_SOL_ABI = [
       {
         "indexed": true,
         "internalType": "address",
-        "name": "participant",
+        "name": "creator",
         "type": "address"
       },
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "amount",
+        "name": "newScore",
         "type": "uint256"
       }
     ],
-    "name": "Submission",
+    "name": "TrustScoreUpdated",
     "type": "event"
   },
   {
@@ -207,6 +284,19 @@ export const ECO_SOL_ABI = [
         "internalType": "bytes32",
         "name": "",
         "type": "bytes32"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "accumulatedFees",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
       }
     ],
     "stateMutability": "view",
@@ -227,7 +317,7 @@ export const ECO_SOL_ABI = [
   },
   {
     "inputs": [],
-    "name": "cycleDuration",
+    "name": "b3trRewardRate",
     "outputs": [
       {
         "internalType": "uint256",
@@ -240,7 +330,238 @@ export const ECO_SOL_ABI = [
   },
   {
     "inputs": [],
-    "name": "getCurrentCycle",
+    "name": "campaignCounter",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "campaignUpdates",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "campaigns",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "id",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address payable",
+        "name": "creator",
+        "type": "address"
+      },
+      {
+        "internalType": "string",
+        "name": "title",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "description",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "medicalDocumentHash",
+        "type": "string"
+      },
+      {
+        "internalType": "uint256",
+        "name": "goalAmount",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "raisedAmount",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "deadline",
+        "type": "uint256"
+      },
+      {
+        "internalType": "bool",
+        "name": "isActive",
+        "type": "bool"
+      },
+      {
+        "internalType": "bool",
+        "name": "isVerified",
+        "type": "bool"
+      },
+      {
+        "internalType": "bool",
+        "name": "fundsWithdrawn",
+        "type": "bool"
+      },
+      {
+        "internalType": "uint256",
+        "name": "createdAt",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "donorCount",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "_title",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_description",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_medicalDocumentHash",
+        "type": "string"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_goalAmount",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_durationDays",
+        "type": "uint256"
+      }
+    ],
+    "name": "createCampaign",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "creatorProfiles",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "totalCampaigns",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "successfulCampaigns",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "totalRaised",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "trustScore",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "lastUpdateTimestamp",
+        "type": "uint256"
+      },
+      {
+        "internalType": "bool",
+        "name": "exists",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_campaignId",
+        "type": "uint256"
+      }
+    ],
+    "name": "deactivateCampaign",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_campaignId",
+        "type": "uint256"
+      }
+    ],
+    "name": "donate",
+    "outputs": [],
+    "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "donations",
     "outputs": [
       {
         "internalType": "uint256",
@@ -253,7 +574,187 @@ export const ECO_SOL_ABI = [
   },
   {
     "inputs": [],
-    "name": "getNextCycleBlock",
+    "name": "getActiveVerifiedCampaignsCount",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_campaignId",
+        "type": "uint256"
+      }
+    ],
+    "name": "getCampaign",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "id",
+            "type": "uint256"
+          },
+          {
+            "internalType": "address payable",
+            "name": "creator",
+            "type": "address"
+          },
+          {
+            "internalType": "string",
+            "name": "title",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "description",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "medicalDocumentHash",
+            "type": "string"
+          },
+          {
+            "internalType": "uint256",
+            "name": "goalAmount",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "raisedAmount",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "deadline",
+            "type": "uint256"
+          },
+          {
+            "internalType": "bool",
+            "name": "isActive",
+            "type": "bool"
+          },
+          {
+            "internalType": "bool",
+            "name": "isVerified",
+            "type": "bool"
+          },
+          {
+            "internalType": "bool",
+            "name": "fundsWithdrawn",
+            "type": "bool"
+          },
+          {
+            "internalType": "uint256",
+            "name": "createdAt",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "donorCount",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct VeCare.Campaign",
+        "name": "",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_campaignId",
+        "type": "uint256"
+      }
+    ],
+    "name": "getCampaignUpdateCount",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_creator",
+        "type": "address"
+      }
+    ],
+    "name": "getCreatorProfile",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "totalCampaigns",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "successfulCampaigns",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "totalRaised",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "trustScore",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "lastUpdateTimestamp",
+            "type": "uint256"
+          },
+          {
+            "internalType": "bool",
+            "name": "exists",
+            "type": "bool"
+          }
+        ],
+        "internalType": "struct VeCare.CreatorProfile",
+        "name": "",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_campaignId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "_donor",
+        "type": "address"
+      }
+    ],
+    "name": "getDonation",
     "outputs": [
       {
         "internalType": "uint256",
@@ -328,12 +829,12 @@ export const ECO_SOL_ABI = [
   {
     "inputs": [
       {
-        "internalType": "address",
-        "name": "participant",
-        "type": "address"
+        "internalType": "uint256",
+        "name": "_campaignId",
+        "type": "uint256"
       }
     ],
-    "name": "isUserMaxSubmissionsReached",
+    "name": "isGoalReached",
     "outputs": [
       {
         "internalType": "bool",
@@ -346,33 +847,7 @@ export const ECO_SOL_ABI = [
   },
   {
     "inputs": [],
-    "name": "lastCycleStartBlock",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "maxSubmissionsPerCycle",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "nextCycle",
+    "name": "platformFeePercentage",
     "outputs": [
       {
         "internalType": "uint256",
@@ -386,17 +861,17 @@ export const ECO_SOL_ABI = [
   {
     "inputs": [
       {
-        "internalType": "address",
-        "name": "participant",
-        "type": "address"
+        "internalType": "uint256",
+        "name": "_campaignId",
+        "type": "uint256"
       },
       {
-        "internalType": "uint256",
-        "name": "amount",
-        "type": "uint256"
+        "internalType": "string",
+        "name": "_updateMessage",
+        "type": "string"
       }
     ],
-    "name": "registerValidSubmission",
+    "name": "postCampaignUpdate",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -440,44 +915,6 @@ export const ECO_SOL_ABI = [
   {
     "inputs": [
       {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "name": "rewards",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "name": "rewardsLeft",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
         "internalType": "bytes32",
         "name": "_appId",
         "type": "bytes32"
@@ -492,11 +929,11 @@ export const ECO_SOL_ABI = [
     "inputs": [
       {
         "internalType": "uint256",
-        "name": "_maxSubmissionsPerCycle",
+        "name": "_rate",
         "type": "uint256"
       }
     ],
-    "name": "setMaxSubmissionsPerCycle",
+    "name": "setB3trRewardRate",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -505,50 +942,13 @@ export const ECO_SOL_ABI = [
     "inputs": [
       {
         "internalType": "uint256",
-        "name": "_nextCycle",
+        "name": "_percentage",
         "type": "uint256"
       }
     ],
-    "name": "setNextCycle",
+    "name": "setPlatformFeePercentage",
     "outputs": [],
     "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "amount",
-        "type": "uint256"
-      }
-    ],
-    "name": "setRewardsAmount",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      },
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "name": "submissions",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -574,24 +974,16 @@ export const ECO_SOL_ABI = [
     "inputs": [
       {
         "internalType": "uint256",
-        "name": "",
+        "name": "_campaignId",
         "type": "uint256"
-      }
-    ],
-    "name": "totalSubmissions",
-    "outputs": [
+      },
       {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
+        "internalType": "bool",
+        "name": "_verified",
+        "type": "bool"
       }
     ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "triggerCycle",
+    "name": "verifyCampaign",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -600,13 +992,39 @@ export const ECO_SOL_ABI = [
     "inputs": [
       {
         "internalType": "uint256",
-        "name": "cycle",
+        "name": "_campaignId",
         "type": "uint256"
       }
     ],
-    "name": "withdrawRewards",
+    "name": "withdrawFunds",
     "outputs": [],
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address payable",
+        "name": "_recipient",
+        "type": "address"
+      }
+    ],
+    "name": "withdrawPlatformFees",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_campaignId",
+        "type": "uint256"
+      }
+    ],
+    "name": "donate",
+    "outputs": [],
+    "stateMutability": "payable",
     "type": "function"
   },
   {
@@ -621,5 +1039,9 @@ export const ECO_SOL_ABI = [
     ],
     "stateMutability": "view",
     "type": "function"
+  },
+  {
+    "stateMutability": "payable",
+    "type": "receive"
   }
 ] as const;

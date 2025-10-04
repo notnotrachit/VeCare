@@ -64,8 +64,16 @@ export class CampaignController {
       }
 
       // Auto-verify if AI confidence is high
-      if (verificationResult.isVerified && verificationResult.confidenceScore >= 0.8) {
-        await this.veCareContracts.verifyCampaign(campaignResult.campaignId!, true);
+      let onChainVerified = false;
+      if (verificationResult.isVerified && verificationResult.confidenceScore >= 0.6 && campaignResult.campaignId) {
+        try {
+          const verified = await this.veCareContracts.verifyCampaign(campaignResult.campaignId, true);
+          onChainVerified = verified;
+          console.log(`Campaign ${campaignResult.campaignId} verification on-chain:`, verified);
+        } catch (error) {
+          console.error('Error verifying campaign on-chain:', error);
+          // Continue even if verification fails - campaign is still created
+        }
       }
 
       const response: CampaignVerificationResult = {
@@ -262,7 +270,9 @@ export class CampaignController {
   };
 
   /**
-   * Verify medical documents only (without creating campaign)
+   * @route   POST /verify-documents
+   * @desc    Verify medical documents with AI (preview mode)
+   * @access  Public
    */
   public verifyDocuments = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
@@ -278,6 +288,39 @@ export class CampaignController {
         success: true,
         data: verificationResult,
       });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  /**
+   * @route   POST /campaigns/:id/verify
+   * @desc    Manually verify a campaign on-chain (Admin only)
+   * @access  Admin
+   */
+  public verifyCampaignOnChain = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const campaignId = parseInt(req.params.id);
+      
+      if (isNaN(campaignId) || campaignId <= 0) {
+        throw new HttpException(400, 'Invalid campaign ID');
+      }
+
+      // Verify the campaign on-chain
+      const success = await this.veCareContracts.verifyCampaign(campaignId, true);
+
+      if (success) {
+        res.status(200).json({
+          success: true,
+          message: `Campaign ${campaignId} has been verified on-chain`,
+          data: {
+            campaignId,
+            isVerified: true,
+          },
+        });
+      } else {
+        throw new HttpException(500, 'Failed to verify campaign on blockchain');
+      }
     } catch (error) {
       next(error);
     }
