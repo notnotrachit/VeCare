@@ -72,10 +72,10 @@ export const HomePage = () => {
             >
               VeCare Chain
             </Heading>
-            <Text fontSize="xl" maxW="2xl" color="gray.600">
+            <div className="text-3xl text-red-300">
               Rebuilding trust in medical crowdfunding with AI verification,
               blockchain transparency, and direct fund access for those in need.
-            </Text>
+            </div>
             <HStack spacing={4} pt={4}>
               <Button
                 size="lg"

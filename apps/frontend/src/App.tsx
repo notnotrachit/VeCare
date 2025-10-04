@@ -11,6 +11,8 @@ import {
   CreatorDashboard,
 } from "./components";
 import { lightTheme } from "./theme";
+import "./index.css";
+
 
 function App() {
   return (

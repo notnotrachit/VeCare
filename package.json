@@ -18,8 +18,11 @@
     "vecare:deploy:testnet": "turbo run vecare:deploy:testnet"
   },
   "devDependencies": {
+    "autoprefixer": "^10.4.21",
     "eslint": "^8.57.0",
+    "postcss": "^8.5.6",
     "prettier": "^3.2.5",
+    "tailwindcss": "^4.1.14",
     "turbo": "^2.1.2"
   },
   "packageManager": "yarn@1.22.21",

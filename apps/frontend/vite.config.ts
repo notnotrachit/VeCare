@@ -1,13 +1,14 @@
 /// <reference types="vitest" />
 
 import { defineConfig } from "vite";
+import tailwindcss from '@tailwindcss/vite'
 import react from "@vitejs/plugin-react";
 import { nodePolyfills } from "vite-plugin-node-polyfills";
 import { resolve } from "path";
 
 export default defineConfig(() => {
   return {
-    plugins: [nodePolyfills(), react()],
+    plugins: [nodePolyfills(), react(), tailwindcss()],
     build: {
       commonjsOptions: {
         transformMixedEsModules: true,
