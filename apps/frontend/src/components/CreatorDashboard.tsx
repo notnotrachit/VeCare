@@ -17,7 +17,7 @@ import {
   StatNumber,
   StatHelpText,
   Icon,
-  useToast,
+  // useToast,
 } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 import { useWallet } from "@vechain/dapp-kit-react";
@@ -34,7 +34,7 @@ interface CreatorProfile {
 
 export const CreatorDashboard = () => {
   const navigate = useNavigate();
-  const toast = useToast();
+  // const toast = useToast();
   const { account } = useWallet();
   const [profile, setProfile] = useState<CreatorProfile | null>(null);
   const [loading, setLoading] = useState(true);

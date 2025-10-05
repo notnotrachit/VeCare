@@ -11,7 +11,6 @@ import {
   Textarea,
   Button,
   useToast,
-  Progress,
   HStack,
   Icon,
   useColorModeValue,
@@ -22,7 +21,7 @@ import {
 } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 import { useWallet } from "@vechain/dapp-kit-react";
-import { FaUpload, FaCheckCircle } from "react-icons/fa";
+import { FaUpload } from "react-icons/fa";
 import { API_ENDPOINTS } from "../config/api";
 
 export const CreateCampaign = () => {
