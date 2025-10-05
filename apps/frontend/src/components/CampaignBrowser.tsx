@@ -104,12 +104,14 @@ export const CampaignBrowser: React.FC = () => {
 
   if (loading) {
     return (
-      <Center h="60vh">
-        <VStack spacing={4}>
-          <Spinner size="xl" color="primary.500" thickness="4px" />
-          <Text>Loading campaigns...</Text>
-        </VStack>
-      </Center>
+      <Box bg="white" pt={{ base: 24, md: 28 }} pb={12}>
+        <Center h="60vh">
+          <VStack spacing={4}>
+            <Spinner size="xl" color="primary.500" thickness="4px" />
+            <Text>Loading campaigns...</Text>
+          </VStack>
+        </Center>
+      </Box>
     );
   }
 
@@ -119,7 +121,7 @@ export const CampaignBrowser: React.FC = () => {
       : campaigns;
 
   return (
-    <Box pt={{ base: 24, md: 28 }} pb={12}>
+    <Box pt={{ base: 24, md: 28 }} pb={12} bg="white">
       <Container maxW="container.xl" px={{ base: 4, md: 8 }}>
         <VStack spacing={8} align="stretch">
           <VStack spacing={4} textAlign="center">

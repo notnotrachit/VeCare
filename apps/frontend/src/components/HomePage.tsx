@@ -24,10 +24,6 @@ export const HomePage = () => {
   const lottieInstanceRef = useRef<AnimationItem | null>(null);
 
   // Colors and backgrounds tuned for a flat, colorful look
-  const heroBg = useColorModeValue(
-    "linear(to-br, primary.50, white)",
-    "linear(to-br, primary.800, primary.900)"
-  );
   const sectionBg = useColorModeValue("white", "gray.900");
   const softText = useColorModeValue("gray.700", "gray.200");
   const cardBg = useColorModeValue("white", "gray.800");
@@ -37,9 +33,9 @@ export const HomePage = () => {
   const benefits = [
     {
       icon: FaUsers,
-      title: "Human + AI Verification",
+      title: "Verified Campaigns",
       description:
-        "Real reviewers supported by AI checks. Balanced, practical, and accountable.",
+        "All campaigns are AI-verified for authenticity.",
       color: "teal.500",
     },
     {
@@ -71,14 +67,14 @@ export const HomePage = () => {
       key: "submit",
       title: "Submit & Review",
       description:
-        "Creators submit medical details. Our team reviews with AI assistance for signal, not decisions.",
+        "Creators submit medical details. The submissions are verified via AI.",
       image: "/hero/submit.svg",
     },
     {
       key: "onchain",
       title: "On-chain Transparency",
       description:
-        "Evidence is checked and tracked on-chain for auditability. No hype—just clarity.",
+        "Evidence is checked and tracked on-chain for auditability. No hype. Just clarity.",
       image: "/hero/on-chain.svg",
     },
     {
@@ -120,7 +116,7 @@ export const HomePage = () => {
     <Box>
       {/* Hero */}
       <Box
-        bgGradient={heroBg}
+        bg="white"
         minH="calc(100vh - 64px)"
         display="flex"
         alignItems="center"
