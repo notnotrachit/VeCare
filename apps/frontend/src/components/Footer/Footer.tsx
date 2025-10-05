@@ -35,43 +35,18 @@ export const Footer: React.FC = () => {
           <TelegramButton />
         </VStack>
       </HStack>
-      <HStack
-        justifyContent={"space-between"}
-        w="full"
-        borderTopColor={"#3e3c3a"}
-        borderTopWidth={1}
-        py={8}
-      >
-        <Text
-          fontWeight={400}
-          fontSize="14px"
-          lineHeight="17px"
-          color="#8c8c8c"
-        >
+      <HStack justifyContent={"space-between"} w="full" borderTopColor={'rgba(255,255,255,0.06)'} borderTopWidth={1} py={8}>
+        <Text fontWeight={400} fontSize="14px" lineHeight="17px" color="gray.100">
           2024 VeBetterDAO. All rights reserved.
         </Text>
         <HStack spacing={4}>
           <Link href={PRIVACY_POLICY_LINK} isExternal>
-            <Text
-              fontWeight={400}
-              fontSize="14px"
-              lineHeight="17px"
-              color="#8c8c8c"
-              as="u"
-              cursor={"pointer"}
-            >
+            <Text fontWeight={400} fontSize="14px" lineHeight="17px" color="gray.200" as="u" cursor={"pointer"}>
               Privacy & Policy
             </Text>
           </Link>
           <Link href={TERMS_AND_CONDITIONS_LINK} isExternal>
-            <Text
-              fontWeight={400}
-              fontSize="14px"
-              lineHeight="17px"
-              color="#8c8c8c"
-              as="u"
-              cursor={"pointer"}
-            >
+            <Text fontWeight={400} fontSize="14px" lineHeight="17px" color="gray.200" as="u" cursor={"pointer"}>
               Terms & Conditions
             </Text>
           </Link>
@@ -102,38 +77,18 @@ export const Footer: React.FC = () => {
           </Box>
         </VStack>
       </VStack>
-      <VStack borderTopColor={"#3e3c3a"} borderTopWidth={1} py={8}>
+      <VStack borderTopColor={'rgba(255,255,255,0.06)'} borderTopWidth={1} py={8}>
         <Link href={PRIVACY_POLICY_LINK} isExternal>
-          <Text
-            fontWeight={400}
-            fontSize="14px"
-            lineHeight="17px"
-            color="#8c8c8c"
-            as="u"
-            cursor={"pointer"}
-          >
+          <Text fontWeight={400} fontSize="14px" lineHeight="17px" color="gray.200" as="u" cursor={"pointer"}>
             Privacy & Policy
           </Text>
         </Link>
         <Link href={TERMS_AND_CONDITIONS_LINK} isExternal>
-          <Text
-            fontWeight={400}
-            fontSize="14px"
-            lineHeight="17px"
-            color="#8c8c8c"
-            as="u"
-            cursor={"pointer"}
-          >
+          <Text fontWeight={400} fontSize="14px" lineHeight="17px" color="gray.200" as="u" cursor={"pointer"}>
             Terms & Conditions
           </Text>
         </Link>
-        <Text
-          fontWeight={400}
-          fontSize="14px"
-          lineHeight="17px"
-          color="#8c8c8c"
-          mt={6}
-        >
+        <Text fontWeight={400} fontSize="14px" lineHeight="17px" color="gray.100" mt={6}>
           2024 VeBetterDAO. All rights reserved.
         </Text>
       </VStack>
@@ -141,7 +96,7 @@ export const Footer: React.FC = () => {
   );
 
   return (
-    <Flex bgColor={"#191714"}>
+    <Flex bgColor={"gray.900"} color="gray.100">
       <Container
         maxW={"container.xl"}
         display={"flex"}

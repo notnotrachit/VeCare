@@ -8,8 +8,8 @@ export const DiscordButton: React.FC = () => {
       <Button
         leftIcon={<FaDiscord size={24} />}
         textColor={"white"}
-        bgColor={`#5865f2`}
-        _hover={{ bg: "#3f4b9c" }}
+        bgColor={"social.discord"}
+        _hover={{ bg: "social.discordHover" }}
         borderRadius={22}
       >
         <Text fontWeight={500} fontSize="16px" lineHeight="19px">

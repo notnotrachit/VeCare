@@ -9,39 +9,52 @@ const themeConfig = {
     Button: ButtonStyle,
   },
 
-  // 2. Add your color mode config
   initialColorMode: "system",
   useSystemColorMode: true,
 
   semanticTokens: {
     colors: {
       "chakra-body-text": {
-        _light: "#1E1E1E",
+        _light: "#0F172A", // a blue-gray (darker than pure black)
+        _dark: lightThemeColors.gray[50],
       },
       "chakra-body-bg": {
-        _light: "#F7F7F7",
+        _light: lightThemeColors.primary[50],
+        _dark: "#0B0B0B",
+      },
+      "primary-default": {
+        _light: lightThemeColors.primary[500],
+        _dark: lightThemeColors.primary[300],
+      },
+      "accent-green": {
+        _light: lightThemeColors.secondary[500],
+        _dark: lightThemeColors.secondary[300],
+      },
+      "muted-text": {
+        _light: lightThemeColors.gray[500],
+        _dark: lightThemeColors.gray[300],
       },
     },
   },
   colors: {
-    //dynamic primary coor based on the light/dark
-
-    green: {
-      "50": "#f3f9f3",
-      "100": "#cfe6d0",
-      "200": "#a4d1a6",
-      "300": "#6fb672",
-      "400": "#51a654",
-      "500": "#259029",
-      "600": "#007b05",
-      "700": "#006304",
-      "800": "#005403",
-      "900": "#003d02",
+    ...lightThemeColors,
+  },
+  styles: {
+    global: {
+      body: {
+        bg: "chakra-body-bg",
+        color: "chakra-body-text",
+        // Improve font rendering
+        WebkitFontSmoothing: "antialiased",
+        MozOsxFontSmoothing: "grayscale",
+      },
+      a: {
+        color: "primary.600",
+      },
     },
   },
 };
 
 export const lightTheme = extendTheme({
   ...themeConfig,
-  colors: lightThemeColors,
 });

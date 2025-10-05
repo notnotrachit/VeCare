@@ -89,7 +89,7 @@ export const CampaignBrowser = () => {
           {/* Header */}
           <VStack spacing={4} textAlign="center">
             <Heading size="2xl">Active Medical Campaigns</Heading>
-            <Text fontSize="lg" color="gray.600" maxW="2xl">
+            <Text fontSize="lg" color="muted-text" maxW="2xl">
               All campaigns are AI-verified for authenticity. Your donation goes
               directly to those in need and earns you B3tr tokens.
             </Text>
@@ -147,7 +147,7 @@ export const CampaignBrowser = () => {
                         {campaign.title}
                       </Heading>
 
-                      <Text color="gray.600" noOfLines={3} fontSize="sm">
+                      <Text color="muted-text" noOfLines={3} fontSize="sm">
                         {campaign.description}
                       </Text>
 

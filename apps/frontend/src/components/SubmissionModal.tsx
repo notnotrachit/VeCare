@@ -22,16 +22,14 @@ export const SubmissionModal = () => {
 
     return isValid ? (
       <VStack
-        bgGradient={
-          "radial-gradient(76.36% 85.35% at 50.12% 27.48%, rgba(230, 252, 207, 0.82) 38.14%, rgba(194, 212, 254, 0.82) 100%), #7DF000"
-        }
+        bgGradient={"linear-gradient(180deg, var(--chakra-colors-primary-50), transparent)"}
         minH={"40vh"}
         minW={"40vh"}
         borderRadius={16}
         justifyContent={"center"}
         alignItems={"center"}
       >
-        <AirdropIcon size={200} color="#373EDF" />
+        <AirdropIcon size={200} color="var(--chakra-colors-primary-500)" />
         <Text fontSize={32} fontWeight={600}>
           Congratulations!
         </Text>
@@ -44,16 +42,14 @@ export const SubmissionModal = () => {
       </VStack>
     ) : (
       <VStack
-        bgGradient={
-          "radial-gradient(76.36% 85.35% at 50.12% 27.48%, rgba(230, 252, 207, 0.82) 38.14%, rgba(194, 212, 254, 0.82) 100%), #7DF000"
-        }
+        bgGradient={"linear-gradient(180deg, rgba(255,255,255,0.02), transparent)"}
         minH={"40vh"}
         minW={"40vh"}
         borderRadius={16}
         justifyContent={"center"}
         alignItems={"center"}
       >
-        <AlertIcon size={200} color="#D23F63" />
+        <AlertIcon size={200} color="var(--chakra-colors-gray-700)" />
         <Text fontSize={32} fontWeight={600}>
           Oops! AI says
         </Text>

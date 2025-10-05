@@ -20,5 +20,6 @@ export const ButtonStyle: ComponentStyleConfig = {
     size: "md",
     rounded: "full",
     variant: "solid",
+    colorScheme: "primary",
   },
 };

@@ -169,7 +169,7 @@ export const CreateCampaign = () => {
           {/* Header */}
           <VStack spacing={4} textAlign="center">
             <Heading size="2xl">Create Medical Campaign</Heading>
-            <Text fontSize="lg" color="gray.600">
+            <Text fontSize="lg" color="muted-text">
               Share your medical need with the world. Our AI will verify your
               documents to build trust with donors.
             </Text>

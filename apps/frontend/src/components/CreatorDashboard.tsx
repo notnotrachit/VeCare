@@ -123,7 +123,7 @@ export const CreatorDashboard = () => {
           {/* Header */}
           <VStack spacing={4} align="start">
             <Heading size="2xl">Creator Dashboard</Heading>
-            <Text fontSize="lg" color="gray.600">
+            <Text fontSize="lg" color="muted-text">
               Track your campaigns and build your reputation on VeCare Chain
             </Text>
           </VStack>
@@ -133,7 +133,7 @@ export const CreatorDashboard = () => {
             <VStack spacing={6}>
               <HStack spacing={4} w="full" justify="space-between">
                 <VStack align="start" spacing={1}>
-                  <Text fontSize="sm" color="gray.600">
+                  <Text fontSize="sm" color="muted-text">
                     Your Trust Score
                   </Text>
                   <HStack>
@@ -162,7 +162,7 @@ export const CreatorDashboard = () => {
               </HStack>
 
               <Box w="full">
-                <Text fontSize="sm" color="gray.600" mb={2}>
+                <Text fontSize="sm" color="muted-text" mb={2}>
                   How to improve your trust score:
                 </Text>
                 <VStack align="start" spacing={1} fontSize="sm">
@@ -250,7 +250,7 @@ export const CreatorDashboard = () => {
                   <Text fontSize="3xl" fontWeight="bold" color="green.600">
                     {((profile.successfulCampaigns / profile.totalCampaigns) * 100).toFixed(0)}%
                   </Text>
-                  <Text color="gray.600">
+                  <Text color="muted-text">
                     {profile.successfulCampaigns} of {profile.totalCampaigns} campaigns reached their goal
                   </Text>
                 </HStack>

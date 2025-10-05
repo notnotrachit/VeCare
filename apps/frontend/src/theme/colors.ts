@@ -1,42 +1,55 @@
-export const lightPrimary = {
-  "50": "#98A3FF",
-  "100": "#7F8CFF",
-  "200": "#6575FF",
-  "300": "#4C5EFF",
-  "400": "#3237FF",
-  "500": "#373EDF", // Provided color
-  "600": "#2428B6",
-  "700": "#111F8D",
-  "800": "#001665",
-  "900": "#000B3C",
-  active: "#004cfc",
-};
-export const lightSecondary = {
-  "50": "#F7FFD7",
-  "100": "#ECFFB0",
-  "200": "#E0FF89",
-  "300": "#D5FF62",
-  "400": "#CAFF3B",
-  "500": "#B3F36C",
-  "600": "#9ED25E",
-  "700": "#8AAF50",
-  "800": "#758D42",
-  "900": "#606B34",
+// Professional, neutral-first color system with a crisp blue primary and green accent
+export const primary = {
+  50: "#E8F0FF",
+  100: "#C6D8FF",
+  200: "#9DBBFF",
+  300: "#74A0FF",
+  400: "#4A85FF",
+  500: "#1F6BFF",
+  600: "#1554DB",
+  700: "#0E3FB4",
+  800: "#082B8C",
+  900: "#041865",
 };
 
-export const lightTertiary = {
-  100: "#c0d98c", // Lighter shade
-  200: "#a6cf75",
-  300: "#8cc65d",
-  400: "#72bc46", // Primary color
-  500: "#58b22f",
-  600: "#3ea917",
-  700: "#249e00",
-  800: "#0a9400", // Darker shade
+export const secondary = {
+  50: "#E8F9ED",
+  100: "#CFF1DB",
+  200: "#B6E9C8",
+  300: "#91DDAA",
+  400: "#5ECF7F",
+  500: "#36B85C",
+  600: "#2B9448",
+  700: "#206D34",
+  800: "#14471F",
+  900: "#09260E",
+};
+
+export const gray = {
+  50: "#F7F7F7",
+  100: "#EFEFEF",
+  200: "#E2E2E2",
+  300: "#CFCFCF",
+  400: "#BDBDBD",
+  500: "#9E9E9E",
+  600: "#7E7E7E",
+  700: "#5F5F5F",
+  800: "#3F3F3F",
+  900: "#202020",
+};
+
+export const social = {
+  discord: "#5865F2",
+  discordHover: "#3F4B9C",
+  telegram: "#27A6E7",
+  telegramHover: "#0088CC",
 };
 
 export const lightThemeColors = {
-  primary: lightPrimary,
-  secondary: lightSecondary,
-  tertiary: lightTertiary,
+  primary,
+  secondary,
+  gray,
+  social,
+  // keep an alias for backwards compatibility if anything imported `green` previously
+  green: secondary,
 };

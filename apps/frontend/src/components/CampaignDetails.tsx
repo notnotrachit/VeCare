@@ -250,7 +250,7 @@ export const CampaignDetails = () => {
                 <Heading size="2xl" mb={4}>
                   {campaign.title}
                 </Heading>
-                <Text fontSize="lg" color="gray.600">
+                <Text fontSize="lg" color="muted-text">
                   {campaign.description}
                 </Text>
               </Box>
@@ -324,19 +324,19 @@ export const CampaignDetails = () => {
                 </Heading>
                 <VStack align="stretch" spacing={3}>
                   <HStack justify="space-between">
-                    <Text color="gray.600">Creator</Text>
+                    <Text color="muted-text">Creator</Text>
                     <Text fontFamily="mono" fontSize="sm">
                       {campaign.creator.slice(0, 6)}...{campaign.creator.slice(-4)}
                     </Text>
                   </HStack>
                   <HStack justify="space-between">
-                    <Text color="gray.600">Created</Text>
+                    <Text color="muted-text">Created</Text>
                     <Text>
                       {new Date(campaign.createdAt * 1000).toLocaleDateString()}
                     </Text>
                   </HStack>
                   <HStack justify="space-between">
-                    <Text color="gray.600">Campaign ID</Text>
+                    <Text color="muted-text">Campaign ID</Text>
                     <Text>#{campaign.id}</Text>
                   </HStack>
                 </VStack>
@@ -388,16 +388,16 @@ export const CampaignDetails = () => {
                   <Text fontSize="sm" fontWeight="bold">
                     Why Donate?
                   </Text>
-                  <Text fontSize="sm" color="gray.600">
+                  <Text fontSize="sm" color="muted-text">
                     ✅ AI-verified medical need
                   </Text>
-                  <Text fontSize="sm" color="gray.600">
+                  <Text fontSize="sm" color="muted-text">
                     💰 Direct transfer to creator
                   </Text>
-                  <Text fontSize="sm" color="gray.600">
+                  <Text fontSize="sm" color="muted-text">
                     🪙 Earn B3tr token rewards
                   </Text>
-                  <Text fontSize="sm" color="gray.600">
+                  <Text fontSize="sm" color="muted-text">
                     🔗 Blockchain transparency
                   </Text>
                 </VStack>

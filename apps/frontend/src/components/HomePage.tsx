@@ -18,10 +18,14 @@ import { FaHeartbeat, FaShieldAlt, FaGlobe, FaCoins } from "react-icons/fa";
 export const HomePage = () => {
   const navigate = useNavigate();
   const bgGradient = useColorModeValue(
-    "linear(to-br, blue.50, green.50)",
-    "linear(to-br, gray.900, gray.800)"
+    // lighter hero for a softer, trustful look
+    "linear(to-br, whiteAlpha.900, primary.50)",
+    "linear(to-br, primary.800, primary.900)"
   );
   const cardBg = useColorModeValue("white", "gray.800");
+  const descColor = useColorModeValue("gray.700", "gray.200");
+  const featuresHeadingColor = useColorModeValue("white", "white");
+  const featuresDescColor = useColorModeValue("whiteAlpha.900", "whiteAlpha.900");
 
   const features = [
     {
@@ -60,38 +64,29 @@ export const HomePage = () => {
       <Box bgGradient={bgGradient} py={{ base: 16, md: 24 }}>
         <Container maxW="container.xl">
           <VStack spacing={8} textAlign="center">
-            <Badge colorScheme="green" fontSize="md" px={4} py={2} borderRadius="full">
-              🩺 AI-Verified Medical Crowdfunding
+            <Badge colorScheme="primary" fontSize="md" px={4} py={2} borderRadius="full">
+              AI-Verified Medical Crowdfunding
             </Badge>
             <Heading
               as="h1"
               size="3xl"
-              fontWeight="bold"
-              bgGradient="linear(to-r, blue.600, green.500)"
+              fontWeight="700"
+              letterSpacing="-0.02em"
+              bgGradient={"linear(to-r, primary.700, primary.500)"}
               bgClip="text"
+              color="var(--chakra-colors-primary-600)"
             >
               VeCare Chain
             </Heading>
-            <div className="text-3xl text-red-300">
+            <Text fontSize="xl" color={descColor} maxW="3xl">
               Rebuilding trust in medical crowdfunding with AI verification,
               blockchain transparency, and direct fund access for those in need.
-            </div>
+            </Text>
             <HStack spacing={4} pt={4}>
-              <Button
-                size="lg"
-                colorScheme="blue"
-                onClick={() => navigate("/campaigns")}
-                px={8}
-              >
+              <Button size="lg" colorScheme="primary" onClick={() => navigate("/campaigns")} px={8}>
                 Browse Campaigns
               </Button>
-              <Button
-                size="lg"
-                variant="outline"
-                colorScheme="green"
-                onClick={() => navigate("/create")}
-                px={8}
-              >
+              <Button size="lg" variant="outline" colorScheme="primary" onClick={() => navigate("/create")} px={8}>
                 Create Campaign
               </Button>
             </HStack>
@@ -100,11 +95,18 @@ export const HomePage = () => {
       </Box>
 
       {/* Features Section */}
-      <Container maxW="container.xl" py={20}>
+      <Container
+        bgGradient={useColorModeValue("linear(to-br, primary.600, primary.700)", "linear(to-br, primary.800, primary.900)")}
+        maxW="full"
+        py={20}
+        px={20}
+      >
         <VStack spacing={12}>
           <VStack spacing={4} textAlign="center">
-            <Heading size="xl">How VeCare Chain Works</Heading>
-            <Text fontSize="lg" color="gray.600" maxW="2xl">
+            <Heading size="xl" color={featuresHeadingColor}>
+              How VeCare Works
+            </Heading>
+            <Text fontSize="lg" color={featuresDescColor} maxW="2xl">
               We combine AI verification, blockchain transparency, and community
               governance to create a trusted platform for medical crowdfunding.
             </Text>
@@ -133,7 +135,7 @@ export const HomePage = () => {
                     <Icon as={feature.icon} w={6} h={6} color={feature.color} />
                   </Flex>
                   <Heading size="md">{feature.title}</Heading>
-                  <Text color="gray.600">{feature.description}</Text>
+                  <Text color={descColor}>{feature.description}</Text>
                 </VStack>
               </Box>
             ))}
@@ -142,33 +144,27 @@ export const HomePage = () => {
       </Container>
 
       {/* CTA Section */}
-      <Box bg="blue.600" py={16}>
+      <Box bg="white" py={16}>
         <Container maxW="container.xl">
           <VStack spacing={6} textAlign="center">
-            <Heading size="xl" color="white">
+            <Heading size="xl" color="black">
               Ready to Make a Difference?
             </Heading>
-            <Text fontSize="lg" color="blue.100" maxW="2xl">
+            <Text fontSize="lg" color="muted-text" maxW="2xl">
               Whether you need help or want to help others, VeCare Chain provides
               a trusted platform for medical crowdfunding.
             </Text>
             <HStack spacing={4}>
-              <Button
-                size="lg"
-                bg="white"
-                color="blue.600"
-                onClick={() => navigate("/campaigns")}
-                _hover={{ bg: "gray.100" }}
-              >
+              <Button size="lg" colorScheme="primary" onClick={() => navigate("/campaigns")} px={6}>
                 Donate Now
               </Button>
               <Button
                 size="lg"
                 variant="outline"
-                color="white"
-                borderColor="white"
+                colorScheme="primary"
+                borderColor="primary.600"
                 onClick={() => navigate("/create")}
-                _hover={{ bg: "blue.700" }}
+                _hover={{ bg: "primary.50" }}
               >
                 Start a Campaign
               </Button>
@@ -181,10 +177,10 @@ export const HomePage = () => {
       <Container maxW="container.xl" py={16}>
         <SimpleGrid columns={{ base: 1, md: 3 }} spacing={8}>
           <VStack>
-            <Heading size="2xl" color="blue.600">
+            <Heading size="2xl" color="primary.600">
               100%
             </Heading>
-            <Text fontSize="lg" color="gray.600">
+            <Text fontSize="lg" color="muted-text">
               AI-Verified Campaigns
             </Text>
           </VStack>
@@ -192,7 +188,7 @@ export const HomePage = () => {
             <Heading size="2xl" color="green.600">
               Direct
             </Heading>
-            <Text fontSize="lg" color="gray.600">
+            <Text fontSize="lg" color="muted-text">
               Fund Transfers
             </Text>
           </VStack>
@@ -200,7 +196,7 @@ export const HomePage = () => {
             <Heading size="2xl" color="orange.600">
               B3tr
             </Heading>
-            <Text fontSize="lg" color="gray.600">
+            <Text fontSize="lg" color="muted-text">
               Rewards for Donors
             </Text>
           </VStack>

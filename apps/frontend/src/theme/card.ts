@@ -12,32 +12,32 @@ const variants = {
   base: (props: StyleFunctionProps) =>
     definePartsStyle({
       container: {
-        bg: props.colorMode === "dark" ? "#1A1A1A" : "#FFF",
+        bg: props.colorMode === "dark" ? "gray.800" : "gray.50",
         borderWidth: "1px",
-        borderColor: props.colorMode === "dark" ? "#2D2D2F" : "transparent",
+        borderColor: props.colorMode === "dark" ? "gray.700" : "transparent",
       },
     }),
   filled: (props: StyleFunctionProps) =>
     definePartsStyle({
       container: {
-        bg: props.colorMode === "dark" ? "#2D2D2F" : "#FAFAFA",
+        bg: props.colorMode === "dark" ? "gray.700" : "gray.100",
       },
     }),
   baseWithBorder: (props: StyleFunctionProps) =>
     definePartsStyle({
       container: {
-        bg: props.colorMode === "dark" ? "#1A1A1A" : "#FFF",
+        bg: props.colorMode === "dark" ? "gray.800" : "gray.50",
         borderWidth: "1px",
-        borderColor: props.colorMode === "dark" ? "#2D2D2F" : "gray.100",
+        borderColor: props.colorMode === "dark" ? "gray.700" : "gray.100",
       },
     }),
   secondaryBoxShadow: (props: StyleFunctionProps) =>
     definePartsStyle({
       container: {
-        boxShadow: "inset 0px 0px 100px 5px rgba(177, 241, 108, 1)",
-        bg: props.colorMode === "dark" ? "#1A1A1A" : "#FFF",
+        boxShadow: "inset 0px 0px 60px 3px rgba(100,159,79,0.12)",
+        bg: props.colorMode === "dark" ? "gray.800" : "gray.50",
         borderWidth: "1px",
-        borderColor: props.colorMode === "dark" ? "#2D2D2F" : "gray.100",
+        borderColor: props.colorMode === "dark" ? "gray.700" : "gray.100",
       },
     }),
 };
