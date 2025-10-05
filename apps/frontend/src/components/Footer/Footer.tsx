@@ -20,13 +20,10 @@ export const Footer: React.FC = () => {
   const desktopContent = (
     <VStack>
       <HStack justifyContent={"space-between"} w="full" spacing={4} my={4}>
-        <Box my={14}>
+        <Box>
           <BeBetterVeBetterIcon
-            beBetterProps={{
+            veCareProps={{
               width: "80%",
-            }}
-            veBetterProps={{
-              width: "100%",
             }}
           />
         </Box>
@@ -35,18 +32,43 @@ export const Footer: React.FC = () => {
           <TelegramButton />
         </VStack>
       </HStack>
-      <HStack justifyContent={"space-between"} w="full" borderTopColor={'rgba(255,255,255,0.06)'} borderTopWidth={1} py={8}>
-        <Text fontWeight={400} fontSize="14px" lineHeight="17px" color="gray.100">
-          2024 VeBetterDAO. All rights reserved.
+      <HStack
+        justifyContent={"space-between"}
+        w="full"
+        borderTopColor={"rgba(255,255,255,0.06)"}
+        borderTopWidth={1}
+        py={8}
+      >
+        <Text
+          fontWeight={400}
+          fontSize="14px"
+          lineHeight="17px"
+          color="gray.100"
+        >
+          2025 VeCare. All rights reserved.
         </Text>
         <HStack spacing={4}>
           <Link href={PRIVACY_POLICY_LINK} isExternal>
-            <Text fontWeight={400} fontSize="14px" lineHeight="17px" color="gray.200" as="u" cursor={"pointer"}>
+            <Text
+              fontWeight={400}
+              fontSize="14px"
+              lineHeight="17px"
+              color="gray.200"
+              as="u"
+              cursor={"pointer"}
+            >
               Privacy & Policy
             </Text>
           </Link>
           <Link href={TERMS_AND_CONDITIONS_LINK} isExternal>
-            <Text fontWeight={400} fontSize="14px" lineHeight="17px" color="gray.200" as="u" cursor={"pointer"}>
+            <Text
+              fontWeight={400}
+              fontSize="14px"
+              lineHeight="17px"
+              color="gray.200"
+              as="u"
+              cursor={"pointer"}
+            >
               Terms & Conditions
             </Text>
           </Link>
@@ -61,11 +83,8 @@ export const Footer: React.FC = () => {
       <VStack spacing={4} my={4}>
         <Box my={8}>
           <BeBetterVeBetterIcon
-            beBetterProps={{
+            veCareProps={{
               width: "80%",
-            }}
-            veBetterProps={{
-              width: "100%",
             }}
           />
         </Box>
@@ -77,18 +96,42 @@ export const Footer: React.FC = () => {
           </Box>
         </VStack>
       </VStack>
-      <VStack borderTopColor={'rgba(255,255,255,0.06)'} borderTopWidth={1} py={8}>
+      <VStack
+        borderTopColor={"rgba(255,255,255,0.06)"}
+        borderTopWidth={1}
+        py={8}
+      >
         <Link href={PRIVACY_POLICY_LINK} isExternal>
-          <Text fontWeight={400} fontSize="14px" lineHeight="17px" color="gray.200" as="u" cursor={"pointer"}>
+          <Text
+            fontWeight={400}
+            fontSize="14px"
+            lineHeight="17px"
+            color="gray.200"
+            as="u"
+            cursor={"pointer"}
+          >
             Privacy & Policy
           </Text>
         </Link>
         <Link href={TERMS_AND_CONDITIONS_LINK} isExternal>
-          <Text fontWeight={400} fontSize="14px" lineHeight="17px" color="gray.200" as="u" cursor={"pointer"}>
+          <Text
+            fontWeight={400}
+            fontSize="14px"
+            lineHeight="17px"
+            color="gray.200"
+            as="u"
+            cursor={"pointer"}
+          >
             Terms & Conditions
           </Text>
         </Link>
-        <Text fontWeight={400} fontSize="14px" lineHeight="17px" color="gray.100" mt={6}>
+        <Text
+          fontWeight={400}
+          fontSize="14px"
+          lineHeight="17px"
+          color="gray.100"
+          mt={6}
+        >
           2024 VeBetterDAO. All rights reserved.
         </Text>
       </VStack>
