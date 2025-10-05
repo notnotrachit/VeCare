@@ -39,6 +39,7 @@ export const CreateCampaign = () => {
     'pending',
     'pending',
     'pending',
+    'pending',
   ]);
   const [verificationResult, setVerificationResult] = useState<any>(null);
 
@@ -100,7 +101,7 @@ export const CreateCampaign = () => {
 
   // steps labels are implied in the UI; no separate var required
     setProcessing(true);
-    setStepStatuses(['active', 'pending', 'pending']);
+    setStepStatuses(['active', 'pending', 'pending', 'pending']);
     setCurrentStep(0);
 
     try {
@@ -112,7 +113,7 @@ export const CreateCampaign = () => {
       });
       const verifyJson = await verifyResp.json();
       if (!verifyJson.success) {
-        setStepStatuses(['error', 'pending', 'pending']);
+        setStepStatuses(['error', 'pending', 'pending', 'pending']);
         setVerificationResult(verifyJson.data || null);
         toast({ title: "Verification failed", description: "AI verification failed", status: "error", duration: 5000 });
         setProcessing(false);
@@ -121,14 +122,14 @@ export const CreateCampaign = () => {
 
       setVerificationResult(verifyJson.data);
       if (!verifyJson.data.isVerified) {
-        setStepStatuses(['error', 'pending', 'pending']);
+        setStepStatuses(['error', 'pending', 'pending', 'pending']);
         toast({ title: "Verification incomplete", description: verifyJson.data.reasoning || 'Documents did not pass AI verification', status: 'warning', duration: 6000 });
         setProcessing(false);
         return;
       }
 
       // mark verification done
-      setStepStatuses(['done', 'active', 'pending']);
+      setStepStatuses(['done', 'active', 'pending', 'pending']);
       setCurrentStep(1);
 
       // Step 2: Upload to IPFS (backend handles this)
@@ -158,7 +159,7 @@ export const CreateCampaign = () => {
       }
 
       // Mark IPFS upload done
-      setStepStatuses(['done', 'done', 'active']);
+      setStepStatuses(['done', 'done', 'active', 'pending']);
       setCurrentStep(2);
 
       // Step 3: Create campaign on blockchain using user's wallet
@@ -223,10 +224,38 @@ export const CreateCampaign = () => {
         }
       }
 
-      setStepStatuses(['done', 'done', 'done']);
+      if (!campaignId) {
+        throw new Error('Failed to extract campaign ID from transaction');
+      }
+
+      // Mark campaign creation done
+      setStepStatuses(['done', 'done', 'done', 'active']);
+      setCurrentStep(3);
+
+      // Step 4: Verify campaign on-chain (if AI verification passed with high confidence)
+      if (verifyJson.data?.isVerified && verifyJson.data?.confidenceScore >= 0.6) {
+        try {
+          const verifyOnChainResp = await fetch(`${API_ENDPOINTS.campaigns}/${campaignId}/verify`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+          });
+
+          if (verifyOnChainResp.ok) {
+            const verifyOnChainJson = await verifyOnChainResp.json();
+            if (verifyOnChainJson.success) {
+              console.log(`Campaign ${campaignId} verified on-chain successfully`);
+            }
+          }
+        } catch (error) {
+          console.warn('Failed to verify campaign on-chain:', error);
+          // Continue anyway - campaign was created successfully
+        }
+      }
+
+      setStepStatuses(['done', 'done', 'done', 'done']);
       toast({ 
         title: 'Campaign Created!', 
-        description: `Your campaign has been created successfully${verifyJson.data?.isVerified ? ' and verified by AI' : ''}`, 
+        description: `Your campaign has been created successfully${verifyJson.data?.isVerified && verifyJson.data?.confidenceScore >= 0.6 ? ' and verified' : ''}`, 
         status: 'success', 
         duration: 4000 
       });
@@ -361,7 +390,7 @@ export const CreateCampaign = () => {
 
                       {/* Stepper / progress visual for Verify & Create */}
                       <VStack spacing={2} align="stretch">
-                        {['Verifying documents', 'Uploading to IPFS', 'Creating campaign on-chain'].map((label, idx) => {
+                        {['Verifying documents', 'Uploading to IPFS', 'Creating campaign on-chain', 'Verifying on-chain'].map((label, idx) => {
                           const status = stepStatuses[idx];
                           return (
                             <Flex key={label} align="center" gap={3}>
@@ -404,6 +433,8 @@ export const CreateCampaign = () => {
                             ? 'Uploading…' 
                             : currentStep === 2 
                             ? 'Creating…' 
+                            : currentStep === 3
+                            ? 'Verifying on-chain…'
                             : 'Processing…'}
                         </Text>
                       </HStack>
