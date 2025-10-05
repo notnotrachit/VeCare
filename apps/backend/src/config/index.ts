@@ -2,9 +2,21 @@ import { config } from 'dotenv';
 import { mnemonic } from '@vechain/sdk-core';
 import { ValidateEnv } from '@utils/validateEnv';
 
-// Load .env files only if they exist (can be disabled by setting SKIP_DOTENV=true)
-if (!process.env.SKIP_DOTENV) {
+// Debug: Log if we're loading from .env file or using existing env vars
+console.log('🔍 Checking environment variables...');
+console.log('SKIP_DOTENV:', process.env.SKIP_DOTENV);
+console.log('NODE_ENV:', process.env.NODE_ENV);
+console.log('OPENAI_API_KEY exists:', !!process.env.OPENAI_API_KEY);
+
+// Only load .env files if critical environment variables are not already set
+// This allows deployment platforms (Coolify, Railway, etc.) to provide env vars directly
+const hasCriticalEnvVars = process.env.OPENAI_API_KEY && process.env.PORT;
+
+if (!hasCriticalEnvVars && !process.env.SKIP_DOTENV) {
+  console.log('📁 Loading from .env file...');
   config({ path: `.env.${process.env.NODE_ENV || 'development'}.local` });
+} else {
+  console.log('✅ Using existing environment variables (skipping .env file)');
 }
 
 const validatedEnv = ValidateEnv();
