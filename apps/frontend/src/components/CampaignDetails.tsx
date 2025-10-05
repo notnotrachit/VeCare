@@ -314,7 +314,7 @@ export const CampaignDetails = () => {
   }
 
   return (
-    <Box py={12}>
+    <Box pt={{ base: 24, md: 28 }} pb={12} px={8}>
       <Container maxW="container.xl">
         <SimpleGrid columns={{ base: 1, lg: 3 }} spacing={8}>
           {/* Main Content */}
@@ -339,7 +339,7 @@ export const CampaignDetails = () => {
                 <Heading size="2xl" mb={4}>
                   {campaign.title}
                 </Heading>
-                <Text fontSize="lg" color="muted-text">
+                <Text fontSize="lg" color="gray.700">
                   {campaign.description}
                 </Text>
               </Box>
@@ -382,7 +382,9 @@ export const CampaignDetails = () => {
                   <StatNumber fontSize="lg">
                     {formatTimeRemaining().split(" ")[0]}
                   </StatNumber>
-                  <StatHelpText>{formatTimeRemaining().split(" ")[1]}</StatHelpText>
+                  <StatHelpText>
+                    {formatTimeRemaining().split(" ")[1]}
+                  </StatHelpText>
                 </Stat>
 
                 <Stat>
@@ -413,19 +415,20 @@ export const CampaignDetails = () => {
                 </Heading>
                 <VStack align="stretch" spacing={3}>
                   <HStack justify="space-between">
-                    <Text color="muted-text">Creator</Text>
+                    <Text color="gray.700">Creator</Text>
                     <Text fontFamily="mono" fontSize="sm">
-                      {campaign.creator.slice(0, 6)}...{campaign.creator.slice(-4)}
+                      {campaign.creator.slice(0, 6)}...
+                      {campaign.creator.slice(-4)}
                     </Text>
                   </HStack>
                   <HStack justify="space-between">
-                    <Text color="muted-text">Created</Text>
+                    <Text color="gray.700">Created</Text>
                     <Text>
                       {new Date(campaign.createdAt * 1000).toLocaleDateString()}
                     </Text>
                   </HStack>
                   <HStack justify="space-between">
-                    <Text color="muted-text">Campaign ID</Text>
+                    <Text color="gray.700">Campaign ID</Text>
                     <Text>#{campaign.id}</Text>
                   </HStack>
                 </VStack>
@@ -444,7 +447,8 @@ export const CampaignDetails = () => {
               top={4}
             >
               {/* Show withdrawal option if user is the creator */}
-              {account && campaign.creator.toLowerCase() === account.toLowerCase() ? (
+              {account &&
+              campaign.creator.toLowerCase() === account.toLowerCase() ? (
                 <VStack spacing={6} align="stretch">
                   <Heading size="md">Campaign Management</Heading>
 
@@ -453,7 +457,7 @@ export const CampaignDetails = () => {
                       <Badge colorScheme="green" fontSize="lg" p={3}>
                         ✅ Funds Withdrawn
                       </Badge>
-                      <Text fontSize="sm" color="muted-text" textAlign="center">
+                      <Text fontSize="sm" color="gray.700" textAlign="center">
                         You have already withdrawn the funds from this campaign.
                       </Text>
                     </VStack>
@@ -462,8 +466,9 @@ export const CampaignDetails = () => {
                       <Badge colorScheme="primary" fontSize="md" p={2}>
                         💰 Ready to Withdraw
                       </Badge>
-                      <Text fontSize="sm" color="muted-text">
-                        Campaign has ended or reached its goal. You can now withdraw the funds.
+                      <Text fontSize="sm" color="gray.700">
+                        Campaign has ended or reached its goal. You can now
+                        withdraw the funds.
                       </Text>
                       <Box bg="blue.50" p={4} borderRadius="md">
                         <VStack align="start" spacing={2}>
@@ -474,10 +479,22 @@ export const CampaignDetails = () => {
                             Raised: {campaign.raisedAmount} VET
                           </Text>
                           <Text fontSize="sm">
-                            Platform Fee (2.5%): {(parseFloat(campaign.raisedAmount) * 0.025).toFixed(4)} VET
+                            Platform Fee (2.5%):{" "}
+                            {(
+                              parseFloat(campaign.raisedAmount) * 0.025
+                            ).toFixed(4)}{" "}
+                            VET
                           </Text>
-                          <Text fontSize="sm" fontWeight="bold" color="green.600">
-                            You'll receive: {(parseFloat(campaign.raisedAmount) * 0.975).toFixed(4)} VET
+                          <Text
+                            fontSize="sm"
+                            fontWeight="bold"
+                            color="green.600"
+                          >
+                            You'll receive:{" "}
+                            {(
+                              parseFloat(campaign.raisedAmount) * 0.975
+                            ).toFixed(4)}{" "}
+                            VET
                           </Text>
                         </VStack>
                       </Box>
@@ -496,17 +513,17 @@ export const CampaignDetails = () => {
                       <Badge colorScheme="orange" fontSize="md" p={2}>
                         ⏳ Not Yet Available
                       </Badge>
-                      <Text fontSize="sm" color="muted-text" textAlign="center">
-                        You can withdraw funds when the campaign deadline is reached or the goal amount is met.
+                      <Text fontSize="sm" color="gray.700" textAlign="center">
+                        You can withdraw funds when the campaign deadline is
+                        reached or the goal amount is met.
                       </Text>
                       <Box bg="gray.50" p={4} borderRadius="md">
                         <VStack align="start" spacing={2} fontSize="sm">
                           <Text>
-                            Current: {campaign.raisedAmount} / {campaign.goalAmount} VET
+                            Current: {campaign.raisedAmount} /{" "}
+                            {campaign.goalAmount} VET
                           </Text>
-                          <Text>
-                            {formatTimeRemaining()}
-                          </Text>
+                          <Text>{formatTimeRemaining()}</Text>
                         </VStack>
                       </Box>
                     </VStack>
@@ -518,13 +535,13 @@ export const CampaignDetails = () => {
                     <Text fontSize="sm" fontWeight="bold">
                       Creator Info:
                     </Text>
-                    <Text fontSize="sm" color="muted-text">
+                    <Text fontSize="sm" color="gray.700">
                       📊 {campaign.donorCount} donors
                     </Text>
-                    <Text fontSize="sm" color="muted-text">
+                    <Text fontSize="sm" color="gray.700">
                       💰 {calculateProgress().toFixed(0)}% funded
                     </Text>
-                    <Text fontSize="sm" color="muted-text">
+                    <Text fontSize="sm" color="gray.700">
                       🔗 Campaign #{campaign.id}
                     </Text>
                   </VStack>
@@ -533,13 +550,14 @@ export const CampaignDetails = () => {
                 // Show closed message if funds have been withdrawn
                 <VStack spacing={6} align="stretch">
                   <Heading size="md">Campaign Closed</Heading>
-                  
+
                   <VStack spacing={4}>
                     <Badge colorScheme="green" fontSize="lg" p={3}>
                       ✅ Funds Withdrawn
                     </Badge>
-                    <Text fontSize="sm" color="muted-text" textAlign="center">
-                      This campaign has been completed and the funds have been withdrawn by the creator.
+                    <Text fontSize="sm" color="gray.700" textAlign="center">
+                      This campaign has been completed and the funds have been
+                      withdrawn by the creator.
                     </Text>
                   </VStack>
 
@@ -549,16 +567,16 @@ export const CampaignDetails = () => {
                     <Text fontSize="sm" fontWeight="bold">
                       Campaign Results:
                     </Text>
-                    <Text fontSize="sm" color="muted-text">
+                    <Text fontSize="sm" color="gray.700">
                       💰 Raised: {campaign.raisedAmount} VET
                     </Text>
-                    <Text fontSize="sm" color="muted-text">
+                    <Text fontSize="sm" color="gray.700">
                       🎯 Goal: {campaign.goalAmount} VET
                     </Text>
-                    <Text fontSize="sm" color="muted-text">
+                    <Text fontSize="sm" color="gray.700">
                       👥 {campaign.donorCount} donors
                     </Text>
-                    <Text fontSize="sm" color="muted-text">
+                    <Text fontSize="sm" color="gray.700">
                       📊 {calculateProgress().toFixed(0)}% funded
                     </Text>
                   </VStack>
@@ -607,16 +625,16 @@ export const CampaignDetails = () => {
                     <Text fontSize="sm" fontWeight="bold">
                       Why Donate?
                     </Text>
-                    <Text fontSize="sm" color="muted-text">
+                    <Text fontSize="sm" color="gray.700">
                       ✅ AI-verified medical need
                     </Text>
-                    <Text fontSize="sm" color="muted-text">
+                    <Text fontSize="sm" color="gray.700">
                       💰 Funds held in escrow
                     </Text>
-                    <Text fontSize="sm" color="muted-text">
+                    <Text fontSize="sm" color="gray.700">
                       🪙 Earn B3tr token rewards
                     </Text>
-                    <Text fontSize="sm" color="muted-text">
+                    <Text fontSize="sm" color="gray.700">
                       🔗 Blockchain transparency
                     </Text>
                   </VStack>
