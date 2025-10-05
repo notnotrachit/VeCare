@@ -1,6 +1,6 @@
-# VeCare Chain 🏥🌟
+# VeCare 🏥🌟
 
-**VeCare Chain** is a revolutionary blockchain-based medical crowdfunding platform built on VeChain, integrating AI-powered medical document verification with decentralized finance and reward distribution through VeBetterDAO's X2Earn system.
+**VeCare** is a revolutionary blockchain-based medical crowdfunding platform built on VeChain, integrating AI-powered medical document verification with decentralized finance and reward distribution through VeBetterDAO's X2Earn system.
 
 ## 🌟 Features
 
