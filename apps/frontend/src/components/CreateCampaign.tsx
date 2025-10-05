@@ -13,23 +13,28 @@ import {
   useToast,
   HStack,
   Icon,
-  useColorModeValue,
   Alert,
   AlertIcon,
-  AlertTitle,
-  AlertDescription,
+  
+  Flex,
+  Spinner,
 } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 import { useWallet } from "@vechain/dapp-kit-react";
-import { FaUpload } from "react-icons/fa";
+import { FaUpload, FaCheckCircle, FaTimes } from "react-icons/fa";
 import { API_ENDPOINTS } from "../config/api";
 
 export const CreateCampaign = () => {
   const navigate = useNavigate();
   const toast = useToast();
   const { account } = useWallet();
-  const [loading, setLoading] = useState(false);
-  const [verifying, setVerifying] = useState(false);
+  // processing controls the unified Verify & Create flow
+  const [processing, setProcessing] = useState(false);
+  const [currentStep, setCurrentStep] = useState<number | null>(null);
+  const [stepStatuses, setStepStatuses] = useState<Array<'pending'|'active'|'done'|'error'>>([
+    'pending',
+    'pending',
+  ]);
   const [verificationResult, setVerificationResult] = useState<any>(null);
 
   const [formData, setFormData] = useState({
@@ -40,7 +45,7 @@ export const CreateCampaign = () => {
   });
 
   const [medicalDocuments, setMedicalDocuments] = useState<string[]>([]);
-  const cardBg = useColorModeValue("white", "gray.800");
+  // no local cardBg needed in this component
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -56,50 +61,8 @@ export const CreateCampaign = () => {
     });
   };
 
-  const verifyDocuments = async () => {
-    if (medicalDocuments.length === 0) {
-      toast({
-        title: "No documents",
-        description: "Please upload medical documents first",
-        status: "warning",
-        duration: 3000,
-      });
-      return;
-    }
-
-    setVerifying(true);
-    try {
-      const response = await fetch(API_ENDPOINTS.verifyDocuments, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ medicalDocuments }),
-      });
-
-      const data = await response.json();
-      if (data.success) {
-        setVerificationResult(data.data);
-        toast({
-          title: data.data.isVerified ? "Documents Verified!" : "Verification Failed",
-          description: data.data.reasoning,
-          status: data.data.isVerified ? "success" : "error",
-          duration: 5000,
-        });
-      }
-    } catch (error) {
-      toast({
-        title: "Verification Error",
-        description: "Failed to verify documents. Please try again.",
-        status: "error",
-        duration: 3000,
-      });
-    } finally {
-      setVerifying(false);
-    }
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
+  // Unified verify + create flow triggered by single button
+  const handleVerifyAndCreate = async () => {
     if (!account) {
       toast({
         title: "Wallet not connected",
@@ -120,9 +83,41 @@ export const CreateCampaign = () => {
       return;
     }
 
-    setLoading(true);
+  // steps labels are implied in the UI; no separate var required
+    setProcessing(true);
+    setStepStatuses(['active', 'pending']);
+    setCurrentStep(0);
+
     try {
-      const response = await fetch(API_ENDPOINTS.campaigns, {
+      // Step 1: Verify
+      const verifyResp = await fetch(API_ENDPOINTS.verifyDocuments, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ medicalDocuments }),
+      });
+      const verifyJson = await verifyResp.json();
+      if (!verifyJson.success) {
+        setStepStatuses(['error', 'pending']);
+        setVerificationResult(verifyJson.data || null);
+        toast({ title: "Verification failed", description: "AI verification failed", status: "error", duration: 5000 });
+        setProcessing(false);
+        return;
+      }
+
+      setVerificationResult(verifyJson.data);
+      if (!verifyJson.data.isVerified) {
+        setStepStatuses(['error', 'pending']);
+        toast({ title: "Verification incomplete", description: verifyJson.data.reasoning || 'Documents did not pass AI verification', status: 'warning', duration: 6000 });
+        setProcessing(false);
+        return;
+      }
+
+      // mark verification done
+      setStepStatuses(['done', 'active']);
+      setCurrentStep(1);
+
+      // Step 2: Create campaign
+      const createResp = await fetch(API_ENDPOINTS.campaigns, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -135,31 +130,30 @@ export const CreateCampaign = () => {
         }),
       });
 
-      const data = await response.json();
-      if (data.success) {
-        toast({
-          title: "Campaign Created!",
-          description: `Your campaign has been created${
-            data.data.isVerified ? " and verified" : ""
-          }`,
-          status: "success",
-          duration: 5000,
-        });
-        navigate(`/campaigns/${data.data.campaignId}`);
-      } else {
-        throw new Error("Failed to create campaign");
+      const createJson = await createResp.json();
+      if (!createJson.success) {
+        setStepStatuses(['done', 'error']);
+        toast({ title: 'Creation failed', description: 'Failed to create campaign. Please try again', status: 'error', duration: 5000 });
+        setProcessing(false);
+        return;
       }
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to create campaign. Please try again.",
-        status: "error",
-        duration: 3000,
-      });
+
+      setStepStatuses(['done', 'done']);
+      toast({ title: 'Campaign Created!', description: `Your campaign has been created${createJson.data?.isVerified ? ' and verified' : ''}`, status: 'success', duration: 4000 });
+      // small delay so user can see the final state
+      setTimeout(() => {
+        navigate(`/campaigns/${createJson.data.campaignId}`);
+      }, 600);
+    } catch (err: any) {
+      setStepStatuses((s) => s.map((v, i) => (i === currentStep ? 'error' : v)));
+      toast({ title: 'Error', description: err?.message || 'An error occurred', status: 'error', duration: 5000 });
     } finally {
-      setLoading(false);
+      setProcessing(false);
+      setCurrentStep(null);
     }
   };
+
+  // submit is now handled by handleVerifyAndCreate
 
   return (
     <Box pt={{ base: 24, md: 28 }} pb={12} px={8}>
@@ -176,7 +170,7 @@ export const CreateCampaign = () => {
 
           {/* Form */}
           <Box>
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={(e) => e.preventDefault()}>
               <VStack spacing={6} align="stretch">
                 <FormControl isRequired>
                   <FormLabel>Campaign Title</FormLabel>
@@ -236,78 +230,80 @@ export const CreateCampaign = () => {
                 {/* Medical Documents Upload */}
                 <FormControl isRequired>
                   <FormLabel>Medical Documents</FormLabel>
-                  <VStack spacing={4} align="stretch">
-                    <Button
-                      as="label"
-                      htmlFor="file-upload"
-                      leftIcon={<Icon as={FaUpload} />}
-                      variant="outline"
-                      cursor="pointer"
-                    >
-                      Upload Medical Documents
-                      <Input
-                        id="file-upload"
-                        type="file"
-                        accept="image/*"
-                        multiple
-                        hidden
-                        onChange={handleFileUpload}
-                      />
-                    </Button>
-
-                    {medicalDocuments.length > 0 && (
-                      <Alert status="success">
-                        <AlertIcon />
-                        {medicalDocuments.length} document(s) uploaded
-                      </Alert>
-                    )}
-
-                    {medicalDocuments.length > 0 && !verificationResult && (
+                    <VStack spacing={4} align="stretch">
                       <Button
-                        onClick={verifyDocuments}
-                        isLoading={verifying}
-                        loadingText="Verifying with AI..."
-                        colorScheme="green"
+                        as="label"
+                        htmlFor="file-upload"
+                        leftIcon={<Icon as={FaUpload} />}
                         variant="outline"
+                        cursor="pointer"
+                        isDisabled={processing}
                       >
-                        Verify Documents with AI
+                        Upload Medical Documents
+                        <Input
+                          id="file-upload"
+                          type="file"
+                          accept="image/*"
+                          multiple
+                          hidden
+                          onChange={handleFileUpload}
+                          disabled={processing}
+                        />
                       </Button>
-                    )}
 
-                    {verificationResult && (
-                      <Alert
-                        status={verificationResult.isVerified ? "success" : "warning"}
-                      >
-                        <AlertIcon />
-                        <Box>
-                          <AlertTitle>
-                            {verificationResult.isVerified
-                              ? "Documents Verified!"
-                              : "Verification Incomplete"}
-                          </AlertTitle>
-                          <AlertDescription>
-                            {verificationResult.reasoning}
-                          </AlertDescription>
-                          <Text fontSize="sm" mt={2}>
-                            Confidence: {(verificationResult.confidenceScore * 100).toFixed(0)}%
-                          </Text>
-                        </Box>
-                      </Alert>
-                    )}
-                  </VStack>
+                      {medicalDocuments.length > 0 && (
+                        <Alert status="success">
+                          <AlertIcon />
+                          {medicalDocuments.length} document(s) uploaded
+                        </Alert>
+                      )}
+
+                      {/* Stepper / progress visual for Verify & Create */}
+                      <VStack spacing={2} align="stretch">
+                        {['Verifying documents', 'Creating campaign'].map((label, idx) => {
+                          const status = stepStatuses[idx];
+                          return (
+                            <Flex key={label} align="center" gap={3}>
+                              <Box w={6} h={6} display="flex" alignItems="center" justifyContent="center">
+                                {status === 'done' && <Icon as={FaCheckCircle} color="green.400" />}
+                                {status === 'active' && <Spinner size="sm" color="primary.500" />}
+                                {status === 'pending' && <Box w={3} h={3} borderRadius="full" bg="gray.300" />}
+                                {status === 'error' && <Icon as={FaTimes} color="red.400" />}
+                              </Box>
+                              <Box>
+                                <Text fontSize="sm" fontWeight={status === 'active' ? 'bold' : 'normal'}>
+                                  {label}
+                                </Text>
+                                {status === 'error' && idx === 0 && verificationResult?.reasoning && (
+                                  <Text fontSize="xs" color="red.400">{verificationResult.reasoning}</Text>
+                                )}
+                              </Box>
+                            </Flex>
+                          );
+                        })}
+                      </VStack>
+                    </VStack>
                 </FormControl>
 
-                {/* Submit Button */}
-                <Button
-                  type="submit"
-                  colorScheme="primary"
-                  size="lg"
-                  isLoading={loading}
-                  loadingText="Creating Campaign..."
-                  isDisabled={!account}
-                >
-                  {account ? "Create Campaign" : "Connect Wallet First"}
-                </Button>
+                  {/* Unified Verify & Create Button */}
+                  <Button
+                    type="button"
+                    colorScheme="primary"
+                    size="lg"
+                    onClick={handleVerifyAndCreate}
+                    isDisabled={!account || processing}
+                  >
+                    {processing ? (
+                      <HStack>
+                        <Spinner size="sm" />
+                        <Text>
+                          {currentStep === 0 ? 'Verifying…' : currentStep === 1 ? 'Creating…' : 'Processing…'}
+                        </Text>
+                      </HStack>
+                    ) : (
+                      account ? 'Verify & Create Campaign' : 'Connect Wallet First'
+                    )}
+                  </Button>
 
                 <Text fontSize="sm" color="gray.500" textAlign="center">
                   By creating a campaign, you agree to our terms and conditions.
