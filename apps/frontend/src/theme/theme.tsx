@@ -31,8 +31,8 @@ const themeConfig = {
         _dark: lightThemeColors.secondary[300],
       },
       "muted-text": {
-        _light: lightThemeColors.gray[500],
-        _dark: lightThemeColors.gray[300],
+        _light: lightThemeColors.gray[700],
+        _dark: lightThemeColors.gray[600],
       },
     },
   },

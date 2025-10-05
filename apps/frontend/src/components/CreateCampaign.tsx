@@ -162,20 +162,20 @@ export const CreateCampaign = () => {
   };
 
   return (
-    <Box py={12}>
+    <Box pt={{ base: 24, md: 28 }} pb={12} px={8}>
       <Container maxW="container.md">
         <VStack spacing={8} align="stretch">
           {/* Header */}
           <VStack spacing={4} textAlign="center">
             <Heading size="2xl">Create Medical Campaign</Heading>
-            <Text fontSize="lg" color="muted-text">
+            <Text fontSize="lg" color="gray.700">
               Share your medical need with the world. Our AI will verify your
               documents to build trust with donors.
             </Text>
           </VStack>
 
           {/* Form */}
-          <Box bg={cardBg} p={8} borderRadius="xl" shadow="lg">
+          <Box>
             <form onSubmit={handleSubmit}>
               <VStack spacing={6} align="stretch">
                 <FormControl isRequired>
