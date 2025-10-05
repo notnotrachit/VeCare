@@ -18,17 +18,10 @@ export class CampaignController {
       const body: CreateCampaignRequest = req.body;
 
       // Validate campaign parameters
-      this.veCareContracts.validateCampaignParams(
-        body.title,
-        body.description,
-        body.goalAmount,
-        body.durationDays,
-      );
+      this.veCareContracts.validateCampaignParams(body.title, body.description, body.goalAmount, body.durationDays);
 
       // Verify medical documents with AI
-      const verificationResult = await this.medicalVerification.verifyMedicalDocuments(
-        body.medicalDocuments
-      );
+      const verificationResult = await this.medicalVerification.verifyMedicalDocuments(body.medicalDocuments);
 
       // Store medical documents on IPFS with metadata
       const ipfsHash = await uploadToIPFS(
@@ -47,28 +40,20 @@ export class CampaignController {
             verified: verificationResult.isVerified.toString(),
             confidenceScore: verificationResult.confidenceScore.toString(),
           },
-        }
+        },
       );
 
       // Create campaign on blockchain
-      const campaignResult = await this.veCareContracts.createCampaign(
-        body.title,
-        body.description,
-        ipfsHash,
-        body.goalAmount,
-        body.durationDays,
-      );
+      const campaignResult = await this.veCareContracts.createCampaign(body.title, body.description, ipfsHash, body.goalAmount, body.durationDays);
 
       if (!campaignResult.success) {
         throw new HttpException(500, 'Failed to create campaign on blockchain');
       }
 
       // Auto-verify if AI confidence is high
-      let onChainVerified = false;
       if (verificationResult.isVerified && verificationResult.confidenceScore >= 0.6 && campaignResult.campaignId) {
         try {
           const verified = await this.veCareContracts.verifyCampaign(campaignResult.campaignId, true);
-          onChainVerified = verified;
           console.log(`Campaign ${campaignResult.campaignId} verification on-chain:`, verified);
         } catch (error) {
           console.error('Error verifying campaign on-chain:', error);
@@ -77,7 +62,7 @@ export class CampaignController {
       }
 
       const response: CampaignVerificationResult = {
-        campaignId: campaignResult.campaignId!,
+        campaignId: campaignResult.campaignId ?? -1,
         isVerified: verificationResult.isVerified && verificationResult.confidenceScore >= 0.8,
         verificationDetails: {
           confidenceScore: verificationResult.confidenceScore,
@@ -323,7 +308,7 @@ export class CampaignController {
             verified: verificationResult?.isVerified?.toString() || 'false',
             confidenceScore: verificationResult?.confidenceScore?.toString() || '0',
           },
-        }
+        },
       );
 
       res.status(200).json({
@@ -345,7 +330,7 @@ export class CampaignController {
   public verifyCampaignOnChain = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const campaignId = parseInt(req.params.id);
-      
+
       if (isNaN(campaignId) || campaignId <= 0) {
         throw new HttpException(400, 'Invalid campaign ID');
       }

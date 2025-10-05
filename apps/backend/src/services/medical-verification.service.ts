@@ -58,14 +58,14 @@ CRITICAL: Return ONLY the JSON object. No explanations, no markdown, no code blo
     try {
       // For multiple images, analyze the first one (can be extended to analyze all)
       const primaryImage = images[0];
-      
+
       const gptResponse = await openAIHelper.askChatGPTAboutImage({
         base64Image: primaryImage,
         prompt,
       });
 
       let responseJSONStr = openAIHelper.getResponseJSONString(gptResponse);
-      
+
       // Clean up the response - remove markdown code blocks if present
       responseJSONStr = responseJSONStr.trim();
       if (responseJSONStr.startsWith('```json')) {
@@ -73,7 +73,7 @@ CRITICAL: Return ONLY the JSON object. No explanations, no markdown, no code blo
       } else if (responseJSONStr.startsWith('```')) {
         responseJSONStr = responseJSONStr.replace(/^```\s*/, '').replace(/```\s*$/, '');
       }
-      
+
       // Try to parse the JSON
       let result: MedicalVerificationResult;
       try {
@@ -81,15 +81,16 @@ CRITICAL: Return ONLY the JSON object. No explanations, no markdown, no code blo
       } catch (parseError) {
         console.error('Failed to parse AI response:', responseJSONStr);
         console.error('Parse error:', parseError);
-        
+
         // Return a safe default response
         return {
           isVerified: false,
           confidenceScore: 0.3,
           documentType: 'Unknown',
           findings: [],
-          reasoning: 'Unable to verify document. The AI response could not be processed. Please try uploading a clearer image of your medical document.',
-          redFlags: ['AI verification system returned an invalid response']
+          reasoning:
+            'Unable to verify document. The AI response could not be processed. Please try uploading a clearer image of your medical document.',
+          redFlags: ['AI verification system returned an invalid response'],
         };
       }
 
@@ -102,12 +103,12 @@ CRITICAL: Return ONLY the JSON object. No explanations, no markdown, no code blo
       return result;
     } catch (error) {
       console.error('Medical verification error:', error);
-      
+
       // If it's already an HttpException, rethrow it
       if (error instanceof HttpException) {
         throw error;
       }
-      
+
       throw new HttpException(500, 'Error during medical document verification');
     }
   }

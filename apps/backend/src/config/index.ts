@@ -32,6 +32,8 @@ export const { REWARD_AMOUNT } = validatedEnv;
 export const { PINATA_API_KEY, PINATA_API_SECRET, PINATA_GATEWAY } = validatedEnv;
 
 // Support both mnemonic and private key
-export const ADMIN_PRIVATE_KEY = validatedEnv.ADMIN_PRIVATE_KEY 
-  ? validatedEnv.ADMIN_PRIVATE_KEY 
-  : (validatedEnv.ADMIN_MNEMONIC ? mnemonic.derivePrivateKey(validatedEnv.ADMIN_MNEMONIC.split(' ')) : '');
+export const ADMIN_PRIVATE_KEY = validatedEnv.ADMIN_PRIVATE_KEY
+  ? validatedEnv.ADMIN_PRIVATE_KEY
+  : validatedEnv.ADMIN_MNEMONIC
+  ? mnemonic.derivePrivateKey(validatedEnv.ADMIN_MNEMONIC.split(' '))
+  : '';

@@ -296,30 +296,34 @@ export const CampaignDetails = () => {
 
   if (loading) {
     return (
-      <Center h="60vh">
-        <VStack spacing={4}>
-          <Spinner size="xl" color="blue.500" thickness="4px" />
-          <Text>Loading campaign...</Text>
-        </VStack>
-      </Center>
+      <Box bg="white">
+        <Center h="60vh">
+          <VStack spacing={4}>
+            <Spinner size="xl" color="blue.500" thickness="4px" />
+            <Text>Loading campaign...</Text>
+          </VStack>
+        </Center>
+      </Box>
     );
   }
 
   if (!campaign) {
     return (
-      <Center h="60vh">
-        <VStack spacing={4}>
-          <Text fontSize="xl">Campaign not found</Text>
-          <Button onClick={() => navigate("/campaigns")}>
-            Browse Campaigns
-          </Button>
-        </VStack>
-      </Center>
+      <Box bg="white">
+        <Center h="60vh">
+          <VStack spacing={4}>
+            <Text fontSize="xl">Campaign not found</Text>
+            <Button onClick={() => navigate("/campaigns")}>
+              Browse Campaigns
+            </Button>
+          </VStack>
+        </Center>
+      </Box>
     );
   }
 
   return (
-    <Box pt={{ base: 24, md: 28 }} pb={12} px={8}>
+    <Box bg="white" pt={{ base: 24, md: 28 }} pb={12} px={8}>
       <Container maxW="container.xl">
         <SimpleGrid columns={{ base: 1, lg: 3 }} spacing={8}>
           {/* Main Content */}

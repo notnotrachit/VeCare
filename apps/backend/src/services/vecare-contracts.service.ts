@@ -42,16 +42,8 @@ export class VeCareContractsService {
   ): Promise<{ success: boolean; campaignId?: number; txId?: string }> {
     try {
       const goalInWei = unitsUtils.parseUnits(goalAmount, 'ether');
-      
-      const result = await (
-        await veCareContract.transact.createCampaign(
-          title,
-          description,
-          medicalDocumentHash,
-          goalInWei,
-          durationDays
-        )
-      ).wait();
+
+      const result = await (await veCareContract.transact.createCampaign(title, description, medicalDocumentHash, goalInWei, durationDays)).wait();
 
       if (result.reverted) {
         return { success: false };
@@ -60,15 +52,13 @@ export class VeCareContractsService {
       // Extract campaign ID from event topics
       // The CampaignCreated event has the campaign ID as the second topic (topics[1])
       let campaignId: number | undefined;
-      
+
       if (result.outputs && result.outputs.length > 0) {
         const events = (result.outputs[0] as any).events;
         if (events && events.length > 0) {
           // Find the CampaignCreated event
-          const campaignCreatedEvent = events.find((e: any) => 
-            e.topics && e.topics.length >= 2
-          );
-          
+          const campaignCreatedEvent = events.find((e: any) => e.topics && e.topics.length >= 2);
+
           if (campaignCreatedEvent && campaignCreatedEvent.topics) {
             // Campaign ID is in topics[1] as a hex string
             const campaignIdHex = campaignCreatedEvent.topics[1];
@@ -97,9 +87,7 @@ export class VeCareContractsService {
    */
   public async verifyCampaign(campaignId: number, verified: boolean): Promise<boolean> {
     try {
-      const result = await (
-        await veCareContract.transact.verifyCampaign(campaignId, verified)
-      ).wait();
+      const result = await (await veCareContract.transact.verifyCampaign(campaignId, verified)).wait();
 
       return !result.reverted;
     } catch (error) {
@@ -114,13 +102,13 @@ export class VeCareContractsService {
   public async getCampaign(campaignId: number): Promise<Campaign | null> {
     try {
       const result = await veCareContract.read.getCampaign(campaignId);
-      
+
       if (!result || result.length === 0) {
         return null;
       }
 
       const campaignData = result[0];
-      
+
       return {
         id: Number(campaignData.id),
         creator: campaignData.creator,
@@ -145,10 +133,7 @@ export class VeCareContractsService {
   /**
    * Get all campaigns (paginated)
    */
-  public async getAllCampaigns(
-    startId: number = 1,
-    limit: number = 20
-  ): Promise<Campaign[]> {
+  public async getAllCampaigns(startId = 1, limit = 20): Promise<Campaign[]> {
     try {
       const campaignCountResult = await veCareContract.read.campaignCounter();
       const totalCampaigns = Number(campaignCountResult[0]);
@@ -178,12 +163,7 @@ export class VeCareContractsService {
       const allCampaigns = await this.getAllCampaigns(1, 100); // Adjust limit as needed
       const now = Math.floor(Date.now() / 1000);
 
-      return allCampaigns.filter(
-        campaign => 
-          campaign.isActive && 
-          campaign.isVerified && 
-          campaign.deadline > now
-      );
+      return allCampaigns.filter(campaign => campaign.isActive && campaign.isVerified && campaign.deadline > now);
     } catch (error) {
       console.error('Error getting active verified campaigns:', error);
       return [];
@@ -196,13 +176,13 @@ export class VeCareContractsService {
   public async getCreatorProfile(creatorAddress: string): Promise<CreatorProfile | null> {
     try {
       const result = await veCareContract.read.getCreatorProfile(creatorAddress);
-      
+
       if (!result || result.length === 0) {
         return null;
       }
 
       const profileData = result[0];
-      
+
       return {
         totalCampaigns: Number(profileData.totalCampaigns),
         successfulCampaigns: Number(profileData.successfulCampaigns),
@@ -259,12 +239,7 @@ export class VeCareContractsService {
   /**
    * Validate campaign creation parameters
    */
-  public validateCampaignParams(
-    title: string,
-    description: string,
-    goalAmount: string,
-    durationDays: number,
-  ): void {
+  public validateCampaignParams(title: string, description: string, goalAmount: string, durationDays: number): void {
     if (!title || title.trim().length === 0) {
       throw new HttpException(400, 'Campaign title is required');
     }

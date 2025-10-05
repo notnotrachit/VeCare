@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   Box,
   Container,
@@ -40,17 +40,10 @@ export const CreatorDashboard = () => {
   const [loading, setLoading] = useState(true);
   const cardBg = useColorModeValue("white", "gray.800");
 
-  useEffect(() => {
-    if (account) {
-      fetchProfile();
-    } else {
-      setLoading(false);
-    }
-  }, [account]);
-
-  const fetchProfile = async () => {
+  const fetchProfile = useCallback(async () => {
     try {
-      const response = await fetch(API_ENDPOINTS.creators(account!));
+      if (!account) return;
+      const response = await fetch(API_ENDPOINTS.creators(account));
       const data = await response.json();
       if (data.success) {
         setProfile(data.data);
@@ -60,7 +53,15 @@ export const CreatorDashboard = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [account]);
+
+  useEffect(() => {
+    if (account) {
+      fetchProfile();
+    } else {
+      setLoading(false);
+    }
+  }, [account, fetchProfile]);
 
   const getTrustScoreColor = (score: number) => {
     if (score >= 80) return "green";
