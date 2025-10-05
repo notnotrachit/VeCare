@@ -20,32 +20,6 @@ export const Footer: React.FC = () => {
       {/* Left: Logo + legal links */}
       <VStack align="start" spacing={6} flex="1">
         <BeBetterVeBetterIcon />
-        <HStack spacing={4}>
-          <Link href={PRIVACY_POLICY_LINK} isExternal>
-            <Text
-              fontWeight={400}
-              fontSize="14px"
-              lineHeight="17px"
-              color={useColorModeValue("whiteAlpha.900", "whiteAlpha.900")}
-              as="u"
-              cursor={"pointer"}
-            >
-              Privacy & Policy
-            </Text>
-          </Link>
-          <Link href={TERMS_AND_CONDITIONS_LINK} isExternal>
-            <Text
-              fontWeight={400}
-              fontSize="14px"
-              lineHeight="17px"
-              color={useColorModeValue("whiteAlpha.900", "whiteAlpha.900")}
-              as="u"
-              cursor={"pointer"}
-            >
-              Terms & Conditions
-            </Text>
-          </Link>
-        </HStack>
         <Text
           fontWeight={400}
           fontSize="14px"
@@ -100,32 +74,6 @@ export const Footer: React.FC = () => {
         </HStack>
       </VStack>
       <VStack spacing={3}>
-        <HStack spacing={4}>
-          <Link href={PRIVACY_POLICY_LINK} isExternal>
-            <Text
-              fontWeight={400}
-              fontSize="14px"
-              lineHeight="17px"
-              color={useColorModeValue("whiteAlpha.900", "whiteAlpha.900")}
-              as="u"
-              cursor={"pointer"}
-            >
-              Privacy & Policy
-            </Text>
-          </Link>
-          <Link href={TERMS_AND_CONDITIONS_LINK} isExternal>
-            <Text
-              fontWeight={400}
-              fontSize="14px"
-              lineHeight="17px"
-              color={useColorModeValue("whiteAlpha.900", "whiteAlpha.900")}
-              as="u"
-              cursor={"pointer"}
-            >
-              Terms & Conditions
-            </Text>
-          </Link>
-        </HStack>
         <Text
           fontWeight={400}
           fontSize="14px"
