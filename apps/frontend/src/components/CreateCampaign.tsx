@@ -298,7 +298,7 @@ export const CreateCampaign = () => {
   // submit is now handled by handleVerifyAndCreate
 
   return (
-    <Box pt={{ base: 24, md: 28 }} pb={12} px={8}>
+    <Box pt={{ base: 24, md: 28 }} pb={12} px={8} bg="white">
       <Container maxW="container.md">
         <VStack spacing={8} align="stretch">
           {/* Header */}
@@ -400,30 +400,35 @@ export const CreateCampaign = () => {
                         </Alert>
                       )}
 
-                      {/* Stepper / progress visual for Verify & Create */}
-                      <VStack spacing={2} align="stretch">
-                        {['Verifying documents', 'Uploading to IPFS', 'Creating campaign on-chain', 'Verifying on-chain'].map((label, idx) => {
-                          const status = stepStatuses[idx];
-                          return (
-                            <Flex key={label} align="center" gap={3}>
-                              <Box w={6} h={6} display="flex" alignItems="center" justifyContent="center">
-                                {status === 'done' && <Icon as={FaCheckCircle} color="green.400" />}
-                                {status === 'active' && <Spinner size="sm" color="primary.500" />}
-                                {status === 'pending' && <Box w={3} h={3} borderRadius="full" bg="gray.300" />}
-                                {status === 'error' && <Icon as={FaTimes} color="red.400" />}
-                              </Box>
-                              <Box>
-                                <Text fontSize="sm" fontWeight={status === 'active' ? 'bold' : 'normal'}>
-                                  {label}
-                                </Text>
-                                {status === 'error' && idx === 0 && verificationResult?.reasoning && (
-                                  <Text fontSize="xs" color="red.400">{verificationResult.reasoning}</Text>
-                                )}
-                              </Box>
-                            </Flex>
-                          );
-                        })}
-                      </VStack>
+                      {/* Progressive status list: show only steps that have started (non-pending) */}
+                      {(() => {
+                        const steps = ['Verifying documents', 'Uploading to IPFS', 'Creating campaign on-chain', 'Verifying on-chain'];
+                        const visible = stepStatuses
+                          .map((status, idx) => ({ status, idx, label: steps[idx] }))
+                          .filter((s) => s.status !== 'pending');
+                        if (visible.length === 0) return null;
+                        return (
+                          <VStack spacing={2} align="stretch">
+                            {visible.map(({ status, idx, label }) => (
+                              <Flex key={label} align="center" gap={3}>
+                                <Box w={6} h={6} display="flex" alignItems="center" justifyContent="center">
+                                  {status === 'done' && <Icon as={FaCheckCircle} color="green.400" />}
+                                  {status === 'active' && <Spinner size="sm" color="primary.500" />}
+                                  {status === 'error' && <Icon as={FaTimes} color="red.400" />}
+                                </Box>
+                                <Box>
+                                  <Text fontSize="sm" fontWeight={status === 'active' ? 'bold' : 'normal'}>
+                                    {label}
+                                  </Text>
+                                  {status === 'error' && idx === 0 && verificationResult?.reasoning && (
+                                    <Text fontSize="xs" color="red.400">{verificationResult.reasoning}</Text>
+                                  )}
+                                </Box>
+                              </Flex>
+                            ))}
+                          </VStack>
+                        );
+                      })()}
                     </VStack>
                 </FormControl>
 

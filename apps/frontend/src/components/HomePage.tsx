@@ -24,10 +24,6 @@ export const HomePage = () => {
   const lottieInstanceRef = useRef<AnimationItem | null>(null);
 
   // Colors and backgrounds tuned for a flat, colorful look
-  const heroBg = useColorModeValue(
-    "linear(to-br, primary.50, white)",
-    "linear(to-br, primary.800, primary.900)"
-  );
   const sectionBg = useColorModeValue("white", "gray.900");
   const softText = useColorModeValue("gray.700", "gray.200");
   const cardBg = useColorModeValue("white", "gray.800");
@@ -120,7 +116,7 @@ export const HomePage = () => {
     <Box>
       {/* Hero */}
       <Box
-        bgGradient={heroBg}
+        bg="white"
         minH="calc(100vh - 64px)"
         display="flex"
         alignItems="center"
