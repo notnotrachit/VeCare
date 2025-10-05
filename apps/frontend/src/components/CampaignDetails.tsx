@@ -40,6 +40,8 @@ interface Campaign {
   isVerified: boolean;
   donorCount: number;
   createdAt: number;
+  fundsWithdrawn: boolean;
+  isActive: boolean;
 }
 
 export const CampaignDetails = () => {
@@ -51,6 +53,7 @@ export const CampaignDetails = () => {
   const [campaign, setCampaign] = useState<Campaign | null>(null);
   const [loading, setLoading] = useState(true);
   const [donating, setDonating] = useState(false);
+  const [withdrawing, setWithdrawing] = useState(false);
   const [donationAmount, setDonationAmount] = useState("");
   const cardBg = useColorModeValue("white", "gray.800");
 
@@ -200,6 +203,92 @@ export const CampaignDetails = () => {
     return "Ending soon";
   };
 
+  const canWithdraw = () => {
+    if (!campaign || !account) return false;
+    if (campaign.creator.toLowerCase() !== account.toLowerCase()) return false;
+    if (campaign.fundsWithdrawn) return false;
+    if (parseFloat(campaign.raisedAmount) === 0) return false;
+    
+    const now = Math.floor(Date.now() / 1000);
+    const isExpired = now >= campaign.deadline;
+    const isGoalReached = parseFloat(campaign.raisedAmount) >= parseFloat(campaign.goalAmount);
+    
+    return isExpired || isGoalReached;
+  };
+
+  const handleWithdraw = async () => {
+    if (!account || !campaign) return;
+
+    setWithdrawing(true);
+    try {
+      // Encode the withdrawFunds function call
+      const withdrawFunction = new abiUtils.Function(
+        VECARE_SOL_ABI.find((item: any) => item.name === 'withdrawFunds' && item.type === 'function')
+      );
+      const encodedData = withdrawFunction.encodeInput([campaign.id]);
+      
+      // Create contract clause for withdrawal
+      const clause = {
+        to: config.VECARE_CONTRACT_ADDRESS,
+        value: '0',
+        data: encodedData,
+      };
+
+      // Send transaction using Connex
+      if (!connex) {
+        throw new Error('Please connect your wallet');
+      }
+
+      const result = await connex.vendor
+        .sign('tx', [clause])
+        .signer(account)
+        .comment(`Withdraw funds from campaign: ${campaign.title}`)
+        .request();
+
+      toast({
+        title: "Transaction Sent!",
+        description: "Waiting for confirmation...",
+        status: "info",
+        duration: 3000,
+      });
+
+      // Wait for transaction receipt
+      const receipt = await connex.thor.transaction(result.txid).getReceipt();
+      
+      if (receipt) {
+        if (receipt.reverted) {
+          throw new Error('Transaction reverted');
+        }
+        
+        toast({
+          title: "Withdrawal Successful!",
+          description: `Funds have been transferred to your wallet (minus 2.5% platform fee)`,
+          status: "success",
+          duration: 5000,
+        });
+        fetchCampaign(); // Refresh campaign data
+      } else {
+        toast({
+          title: "Transaction Sent!",
+          description: `Your withdrawal is being processed. Check the explorer for status.`,
+          status: "info",
+          duration: 5000,
+        });
+        fetchCampaign();
+      }
+    } catch (error: any) {
+      console.error('Withdrawal error:', error);
+      toast({
+        title: "Withdrawal Failed",
+        description: error.message || "Please try again",
+        status: "error",
+        duration: 3000,
+      });
+    } finally {
+      setWithdrawing(false);
+    }
+  };
+
   if (loading) {
     return (
       <Center h="60vh">
@@ -344,7 +433,7 @@ export const CampaignDetails = () => {
             </VStack>
           </Box>
 
-          {/* Donation Sidebar */}
+          {/* Donation/Withdrawal Sidebar */}
           <Box>
             <Box
               bg={cardBg}
@@ -354,54 +443,185 @@ export const CampaignDetails = () => {
               position="sticky"
               top={4}
             >
-              <VStack spacing={6} align="stretch">
-                <Heading size="md">Support This Campaign</Heading>
+              {/* Show withdrawal option if user is the creator */}
+              {account && campaign.creator.toLowerCase() === account.toLowerCase() ? (
+                <VStack spacing={6} align="stretch">
+                  <Heading size="md">Campaign Management</Heading>
 
-                <VStack spacing={4} align="stretch">
-                  <Input
-                    type="number"
-                    placeholder="Enter amount in VET"
-                    size="lg"
-                    value={donationAmount}
-                    onChange={(e) => setDonationAmount(e.target.value)}
-                  />
+                  {campaign.fundsWithdrawn ? (
+                    <VStack spacing={4}>
+                      <Badge colorScheme="green" fontSize="lg" p={3}>
+                        ✅ Funds Withdrawn
+                      </Badge>
+                      <Text fontSize="sm" color="muted-text" textAlign="center">
+                        You have already withdrawn the funds from this campaign.
+                      </Text>
+                    </VStack>
+                  ) : canWithdraw() ? (
+                    <VStack spacing={4} align="stretch">
+                      <Badge colorScheme="blue" fontSize="md" p={2}>
+                        💰 Ready to Withdraw
+                      </Badge>
+                      <Text fontSize="sm" color="muted-text">
+                        Campaign has ended or reached its goal. You can now withdraw the funds.
+                      </Text>
+                      <Box bg="blue.50" p={4} borderRadius="md">
+                        <VStack align="start" spacing={2}>
+                          <Text fontSize="sm" fontWeight="bold">
+                            Withdrawal Summary:
+                          </Text>
+                          <Text fontSize="sm">
+                            Raised: {campaign.raisedAmount} VET
+                          </Text>
+                          <Text fontSize="sm">
+                            Platform Fee (2.5%): {(parseFloat(campaign.raisedAmount) * 0.025).toFixed(4)} VET
+                          </Text>
+                          <Text fontSize="sm" fontWeight="bold" color="green.600">
+                            You'll receive: {(parseFloat(campaign.raisedAmount) * 0.975).toFixed(4)} VET
+                          </Text>
+                        </VStack>
+                      </Box>
+                      <Button
+                        colorScheme="green"
+                        size="lg"
+                        onClick={handleWithdraw}
+                        isLoading={withdrawing}
+                        loadingText="Withdrawing..."
+                      >
+                        Withdraw Funds
+                      </Button>
+                    </VStack>
+                  ) : (
+                    <VStack spacing={4}>
+                      <Badge colorScheme="orange" fontSize="md" p={2}>
+                        ⏳ Not Yet Available
+                      </Badge>
+                      <Text fontSize="sm" color="muted-text" textAlign="center">
+                        You can withdraw funds when the campaign deadline is reached or the goal amount is met.
+                      </Text>
+                      <Box bg="gray.50" p={4} borderRadius="md">
+                        <VStack align="start" spacing={2} fontSize="sm">
+                          <Text>
+                            Current: {campaign.raisedAmount} / {campaign.goalAmount} VET
+                          </Text>
+                          <Text>
+                            {formatTimeRemaining()}
+                          </Text>
+                        </VStack>
+                      </Box>
+                    </VStack>
+                  )}
+
+                  <Divider />
+
+                  <VStack align="stretch" spacing={2}>
+                    <Text fontSize="sm" fontWeight="bold">
+                      Creator Info:
+                    </Text>
+                    <Text fontSize="sm" color="muted-text">
+                      📊 {campaign.donorCount} donors
+                    </Text>
+                    <Text fontSize="sm" color="muted-text">
+                      💰 {calculateProgress().toFixed(0)}% funded
+                    </Text>
+                    <Text fontSize="sm" color="muted-text">
+                      🔗 Campaign #{campaign.id}
+                    </Text>
+                  </VStack>
+                </VStack>
+              ) : campaign.fundsWithdrawn ? (
+                // Show closed message if funds have been withdrawn
+                <VStack spacing={6} align="stretch">
+                  <Heading size="md">Campaign Closed</Heading>
+                  
+                  <VStack spacing={4}>
+                    <Badge colorScheme="green" fontSize="lg" p={3}>
+                      ✅ Funds Withdrawn
+                    </Badge>
+                    <Text fontSize="sm" color="muted-text" textAlign="center">
+                      This campaign has been completed and the funds have been withdrawn by the creator.
+                    </Text>
+                  </VStack>
+
+                  <Divider />
+
+                  <VStack align="stretch" spacing={2}>
+                    <Text fontSize="sm" fontWeight="bold">
+                      Campaign Results:
+                    </Text>
+                    <Text fontSize="sm" color="muted-text">
+                      💰 Raised: {campaign.raisedAmount} VET
+                    </Text>
+                    <Text fontSize="sm" color="muted-text">
+                      🎯 Goal: {campaign.goalAmount} VET
+                    </Text>
+                    <Text fontSize="sm" color="muted-text">
+                      👥 {campaign.donorCount} donors
+                    </Text>
+                    <Text fontSize="sm" color="muted-text">
+                      📊 {calculateProgress().toFixed(0)}% funded
+                    </Text>
+                  </VStack>
 
                   <Button
+                    variant="outline"
                     colorScheme="blue"
-                    size="lg"
-                    onClick={handleDonate}
-                    isLoading={donating}
-                    loadingText="Processing..."
-                    isDisabled={!account}
+                    onClick={() => navigate("/campaigns")}
                   >
-                    {account ? "Donate Now" : "Connect Wallet"}
+                    Browse Other Campaigns
                   </Button>
-
-                  <Text fontSize="sm" color="gray.500" textAlign="center">
-                    You'll earn B3tr tokens for your donation!
-                  </Text>
                 </VStack>
+              ) : (
+                // Original donation interface for non-creators
+                <VStack spacing={6} align="stretch">
+                  <Heading size="md">Support This Campaign</Heading>
 
-                <Divider />
+                  <VStack spacing={4} align="stretch">
+                    <Input
+                      type="number"
+                      placeholder="Enter amount in VET"
+                      size="lg"
+                      value={donationAmount}
+                      onChange={(e) => setDonationAmount(e.target.value)}
+                    />
 
-                <VStack align="stretch" spacing={2}>
-                  <Text fontSize="sm" fontWeight="bold">
-                    Why Donate?
-                  </Text>
-                  <Text fontSize="sm" color="muted-text">
-                    ✅ AI-verified medical need
-                  </Text>
-                  <Text fontSize="sm" color="muted-text">
-                    💰 Direct transfer to creator
-                  </Text>
-                  <Text fontSize="sm" color="muted-text">
-                    🪙 Earn B3tr token rewards
-                  </Text>
-                  <Text fontSize="sm" color="muted-text">
-                    🔗 Blockchain transparency
-                  </Text>
+                    <Button
+                      colorScheme="blue"
+                      size="lg"
+                      onClick={handleDonate}
+                      isLoading={donating}
+                      loadingText="Processing..."
+                      isDisabled={!account}
+                    >
+                      {account ? "Donate Now" : "Connect Wallet"}
+                    </Button>
+
+                    <Text fontSize="sm" color="gray.500" textAlign="center">
+                      You'll earn B3tr tokens for your donation!
+                    </Text>
+                  </VStack>
+
+                  <Divider />
+
+                  <VStack align="stretch" spacing={2}>
+                    <Text fontSize="sm" fontWeight="bold">
+                      Why Donate?
+                    </Text>
+                    <Text fontSize="sm" color="muted-text">
+                      ✅ AI-verified medical need
+                    </Text>
+                    <Text fontSize="sm" color="muted-text">
+                      💰 Funds held in escrow
+                    </Text>
+                    <Text fontSize="sm" color="muted-text">
+                      🪙 Earn B3tr token rewards
+                    </Text>
+                    <Text fontSize="sm" color="muted-text">
+                      🔗 Blockchain transparency
+                    </Text>
+                  </VStack>
                 </VStack>
-              </VStack>
+              )}
             </Box>
           </Box>
         </SimpleGrid>
