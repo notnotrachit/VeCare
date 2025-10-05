@@ -27,6 +27,20 @@ import { VECARE_SOL_ABI, config } from "@repo/config-contract";
 import { unitsUtils } from "@vechain/sdk-core";
 import { abi } from "@vechain/sdk-core";
 
+type VerificationResult = {
+  isVerified: boolean;
+  confidenceScore: number;
+  reasoning?: string;
+  [key: string]: unknown;
+};
+
+type AbiItem = {
+  type?: string;
+  name?: string;
+  inputs?: unknown[];
+  outputs?: unknown[];
+};
+
 export const CreateCampaign = () => {
   const navigate = useNavigate();
   const toast = useToast();
@@ -41,7 +55,7 @@ export const CreateCampaign = () => {
     'pending',
     'pending',
   ]);
-  const [verificationResult, setVerificationResult] = useState<any>(null);
+  const [verificationResult, setVerificationResult] = useState<VerificationResult | null>(null);
 
   const [formData, setFormData] = useState({
     title: "",
@@ -111,7 +125,7 @@ export const CreateCampaign = () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ medicalDocuments }),
       });
-      const verifyJson = await verifyResp.json();
+  const verifyJson: { success: boolean; data: VerificationResult } = await verifyResp.json();
       if (!verifyJson.success) {
         setStepStatuses(['error', 'pending', 'pending', 'pending']);
         setVerificationResult(verifyJson.data || null);
@@ -167,15 +181,16 @@ export const CreateCampaign = () => {
       const durationDays = parseInt(formData.durationDays);
 
       // Encode the function call
-      const createCampaignABI = VECARE_SOL_ABI.find(
-        (item: any) => item.name === 'createCampaign' && item.type === 'function'
+      const createCampaignABI = (VECARE_SOL_ABI as ReadonlyArray<AbiItem>).find(
+        (item): item is Required<Pick<AbiItem, 'name' | 'type'>> & AbiItem =>
+          !!item && item.name === 'createCampaign' && item.type === 'function'
       );
 
       if (!createCampaignABI) {
         throw new Error('createCampaign function not found in ABI');
       }
 
-      const abiFunction = new abi.Function(createCampaignABI);
+  const abiFunction = new abi.Function(createCampaignABI as unknown as object);
       const encodedData = abiFunction.encodeInput([
         formData.title,
         formData.description,
@@ -214,12 +229,13 @@ export const CreateCampaign = () => {
       }
 
       // Extract campaign ID from event logs
-      let campaignId = null;
+      let campaignId: number | null = null;
       if (receipt.outputs && receipt.outputs[0]?.events) {
-        const campaignCreatedEvent = receipt.outputs[0].events.find(
-          (e: any) => e.topics && e.topics.length >= 2
+        const events = receipt.outputs[0].events as Array<{ topics?: string[] }>;
+        const campaignCreatedEvent = events.find(
+          (e) => Array.isArray(e.topics) && e.topics.length >= 2
         );
-        if (campaignCreatedEvent) {
+        if (campaignCreatedEvent && campaignCreatedEvent.topics && campaignCreatedEvent.topics[1]) {
           campaignId = parseInt(campaignCreatedEvent.topics[1], 16);
         }
       }
@@ -268,15 +284,11 @@ export const CreateCampaign = () => {
           navigate('/');
         }
       }, 600);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error creating campaign:', err);
       setStepStatuses((s) => s.map((v, i) => (i === currentStep ? 'error' : v)));
-      toast({ 
-        title: 'Error', 
-        description: err?.message || 'An error occurred while creating the campaign', 
-        status: 'error', 
-        duration: 5000 
-      });
+      const message = err instanceof Error ? err.message : 'An error occurred while creating the campaign';
+      toast({ title: 'Error', description: message, status: 'error', duration: 5000 });
     } finally {
       setProcessing(false);
       setCurrentStep(null);

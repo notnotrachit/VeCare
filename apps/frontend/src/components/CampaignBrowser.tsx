@@ -85,7 +85,7 @@ export const CampaignBrowser = () => {
   return (
     // Added extra top padding to avoid clipping under the navbar
     <Box pt={{ base: 24, md: 28 }} pb={12}>
-      <Container maxW="container.xl">
+      <Container maxW="container.xl" px={{ base: 4, md: 8 }}>
         <VStack spacing={8} align="stretch">
           {/* Header */}
           <VStack spacing={4} textAlign="center">

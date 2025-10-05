@@ -28,6 +28,7 @@ export const Navbar = () => {
         justifyContent="space-between"
         alignItems={"center"}
         maxW={"container.xl"}
+        px={{ base: 4, md: 8 }}
       >
         <HStack flex={1} justifyContent={"start"}>
           <Image src="/vebetterdao-logo.svg" width={140}/>

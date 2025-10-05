@@ -18,6 +18,7 @@
     "@tailwindcss/vite": "^4.1.14",
     "@vechain/dapp-kit-react": "^1.0.12",
     "framer-motion": "^11.2.6",
+    "lottie-web": "^5.13.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-dropzone": "^14.2.3",

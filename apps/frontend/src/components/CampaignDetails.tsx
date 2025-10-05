@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   Box,
   Container,
@@ -57,18 +57,13 @@ export const CampaignDetails = () => {
   const [donationAmount, setDonationAmount] = useState("");
   const cardBg = useColorModeValue("white", "gray.800");
 
-  useEffect(() => {
-    if (id) {
-      fetchCampaign();
-    }
-  }, [id]);
-
-  const fetchCampaign = async () => {
+  const fetchCampaign = useCallback(async () => {
+    if (!id) return;
     try {
       const response = await fetch(API_ENDPOINTS.campaign(Number(id)));
       const data = await response.json();
       if (data.success) {
-        setCampaign(data.data);
+        setCampaign(data.data as Campaign);
       }
     } catch (error) {
       console.error("Error fetching campaign:", error);
@@ -81,7 +76,11 @@ export const CampaignDetails = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [id, toast]);
+
+  useEffect(() => {
+    fetchCampaign();
+  }, [fetchCampaign]);
 
   const handleDonate = async () => {
     if (!account) {
@@ -110,9 +109,12 @@ export const CampaignDetails = () => {
       const amountInWei = unitsUtils.parseUnits(donationAmount, 'ether');
       
       // Encode the donate function call using VeChain SDK
-      const donateFunction = new abiUtils.Function(
-        VECARE_SOL_ABI.find((item: any) => item.name === 'donate' && item.type === 'function')
+      type AbiItem = { type?: string; name?: string };
+      const donateAbi = (VECARE_SOL_ABI as ReadonlyArray<AbiItem>).find(
+        (item): item is Required<Pick<AbiItem, 'name' | 'type'>> & AbiItem =>
+          !!item && item.name === 'donate' && item.type === 'function'
       );
+      const donateFunction = new abiUtils.Function(donateAbi as unknown as object);
       const encodedData = donateFunction.encodeInput([campaign!.id]);
       
       // Create contract clause for donation
@@ -172,11 +174,11 @@ export const CampaignDetails = () => {
         setDonationAmount("");
         fetchCampaign(); // Refresh campaign data
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Donation error:', error);
       toast({
         title: "Donation Failed",
-        description: error.message || "Please try again",
+        description: error instanceof Error ? error.message : "Please try again",
         status: "error",
         duration: 3000,
       });
@@ -222,9 +224,12 @@ export const CampaignDetails = () => {
     setWithdrawing(true);
     try {
       // Encode the withdrawFunds function call
-      const withdrawFunction = new abiUtils.Function(
-        VECARE_SOL_ABI.find((item: any) => item.name === 'withdrawFunds' && item.type === 'function')
+      type AbiItem2 = { type?: string; name?: string };
+      const withdrawAbi = (VECARE_SOL_ABI as ReadonlyArray<AbiItem2>).find(
+        (item): item is Required<Pick<AbiItem2, 'name' | 'type'>> & AbiItem2 =>
+          !!item && item.name === 'withdrawFunds' && item.type === 'function'
       );
+      const withdrawFunction = new abiUtils.Function(withdrawAbi as unknown as object);
       const encodedData = withdrawFunction.encodeInput([campaign.id]);
       
       // Create contract clause for withdrawal
@@ -276,11 +281,11 @@ export const CampaignDetails = () => {
         });
         fetchCampaign();
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Withdrawal error:', error);
       toast({
         title: "Withdrawal Failed",
-        description: error.message || "Please try again",
+        description: error instanceof Error ? error.message : "Please try again",
         status: "error",
         duration: 3000,
       });

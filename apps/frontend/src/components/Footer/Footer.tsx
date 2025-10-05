@@ -8,52 +8,25 @@ import {
   Show,
   Link,
   Flex,
+  useColorModeValue,
 } from "@chakra-ui/react";
 
-import { DiscordButton } from "./components/DiscordButton";
-import { TelegramButton } from "./components/TelegramButton";
-import { Socials } from "./components/Socials";
 import { PRIVACY_POLICY_LINK, TERMS_AND_CONDITIONS_LINK } from "../../const";
 import { BeBetterVeBetterIcon } from "../Icon";
 
 export const Footer: React.FC = () => {
   const desktopContent = (
-    <VStack>
-      <HStack justifyContent={"space-between"} w="full" spacing={4} my={4}>
-        <Box>
-          <BeBetterVeBetterIcon
-            veCareProps={{
-              width: "80%",
-            }}
-          />
-        </Box>
-        <VStack spacing={4} alignItems={"flex-end"}>
-          <DiscordButton />
-          <TelegramButton />
-        </VStack>
-      </HStack>
-      <HStack
-        justifyContent={"space-between"}
-        w="full"
-        borderTopColor={"rgba(255,255,255,0.06)"}
-        borderTopWidth={1}
-        py={8}
-      >
-        <Text
-          fontWeight={400}
-          fontSize="14px"
-          lineHeight="17px"
-          color="gray.100"
-        >
-          2025 VeCare. All rights reserved.
-        </Text>
+    <Flex direction="row" align="stretch" justify="space-between" py={10} gap={8}>
+      {/* Left: Logo + legal links */}
+      <VStack align="start" spacing={6} flex="1">
+        <BeBetterVeBetterIcon />
         <HStack spacing={4}>
           <Link href={PRIVACY_POLICY_LINK} isExternal>
             <Text
               fontWeight={400}
               fontSize="14px"
               lineHeight="17px"
-              color="gray.200"
+              color={useColorModeValue("whiteAlpha.900", "whiteAlpha.900")}
               as="u"
               cursor={"pointer"}
             >
@@ -65,7 +38,7 @@ export const Footer: React.FC = () => {
               fontWeight={400}
               fontSize="14px"
               lineHeight="17px"
-              color="gray.200"
+              color={useColorModeValue("whiteAlpha.900", "whiteAlpha.900")}
               as="u"
               cursor={"pointer"}
             >
@@ -73,79 +46,113 @@ export const Footer: React.FC = () => {
             </Text>
           </Link>
         </HStack>
-        <Socials />
-      </HStack>
-    </VStack>
-  );
-
-  const mobileContent = (
-    <VStack>
-      <VStack spacing={4} my={4}>
-        <Box my={8}>
-          <BeBetterVeBetterIcon
-            veCareProps={{
-              width: "80%",
-            }}
-          />
-        </Box>
-        <VStack spacing={4} alignItems={"center"}>
-          <DiscordButton />
-          <TelegramButton />
-          <Box mt={6}>
-            <Socials />
-          </Box>
-        </VStack>
-      </VStack>
-      <VStack
-        borderTopColor={"rgba(255,255,255,0.06)"}
-        borderTopWidth={1}
-        py={8}
-      >
-        <Link href={PRIVACY_POLICY_LINK} isExternal>
-          <Text
-            fontWeight={400}
-            fontSize="14px"
-            lineHeight="17px"
-            color="gray.200"
-            as="u"
-            cursor={"pointer"}
-          >
-            Privacy & Policy
-          </Text>
-        </Link>
-        <Link href={TERMS_AND_CONDITIONS_LINK} isExternal>
-          <Text
-            fontWeight={400}
-            fontSize="14px"
-            lineHeight="17px"
-            color="gray.200"
-            as="u"
-            cursor={"pointer"}
-          >
-            Terms & Conditions
-          </Text>
-        </Link>
         <Text
           fontWeight={400}
           fontSize="14px"
           lineHeight="17px"
-          color="gray.100"
-          mt={6}
+          color={useColorModeValue("whiteAlpha.900", "whiteAlpha.900")}
         >
-          2024 VeBetterDAO. All rights reserved.
+          2025 VeCare. All rights reserved.
+        </Text>
+      </VStack>
+
+      {/* Right: CTA */}
+      <VStack align="end" spacing={4} flex="1" textAlign="right">
+        <Text fontSize="2xl" fontWeight="bold">Ready to make an impact?</Text>
+        <Text fontSize="md" color={useColorModeValue("whiteAlpha.900", "whiteAlpha.900")} maxW="lg">
+          Support a verified campaign or start your own in minutes.
+        </Text>
+        <HStack spacing={3} justify="flex-end">
+          <Link href="/campaigns">
+            <Box as="button" px={5} py={3} bg="white" color="primary.700" borderRadius="md" _hover={{ bg: "whiteAlpha.900" }}>
+              Explore Campaigns
+            </Box>
+          </Link>
+          <Link href="/create">
+            <Box as="button" px={5} py={3} borderWidth="1px" borderColor="whiteAlpha.600" color="white" borderRadius="md" _hover={{ bg: "whiteAlpha.200" }}>
+              Create a Campaign
+            </Box>
+          </Link>
+        </HStack>
+      </VStack>
+    </Flex>
+  );
+
+  const mobileContent = (
+    <VStack spacing={8} py={10}>
+      <VStack spacing={4}>
+        <BeBetterVeBetterIcon />
+        <Text fontSize="2xl" fontWeight="bold" textAlign="center">Ready to make an impact?</Text>
+        <Text fontSize="md" color={useColorModeValue("whiteAlpha.900", "whiteAlpha.900")} textAlign="center" maxW="xs">
+          Support a verified campaign or start your own in minutes.
+        </Text>
+        <HStack spacing={3}>
+          <Link href="/campaigns">
+            <Box as="button" px={5} py={3} bg="white" color="primary.700" borderRadius="md" _hover={{ bg: "whiteAlpha.900" }}>
+              Explore
+            </Box>
+          </Link>
+          <Link href="/create">
+            <Box as="button" px={5} py={3} borderWidth="1px" borderColor="whiteAlpha.600" color="white" borderRadius="md" _hover={{ bg: "whiteAlpha.200" }}>
+              Create
+            </Box>
+          </Link>
+        </HStack>
+      </VStack>
+      <VStack spacing={3}>
+        <HStack spacing={4}>
+          <Link href={PRIVACY_POLICY_LINK} isExternal>
+            <Text
+              fontWeight={400}
+              fontSize="14px"
+              lineHeight="17px"
+              color={useColorModeValue("whiteAlpha.900", "whiteAlpha.900")}
+              as="u"
+              cursor={"pointer"}
+            >
+              Privacy & Policy
+            </Text>
+          </Link>
+          <Link href={TERMS_AND_CONDITIONS_LINK} isExternal>
+            <Text
+              fontWeight={400}
+              fontSize="14px"
+              lineHeight="17px"
+              color={useColorModeValue("whiteAlpha.900", "whiteAlpha.900")}
+              as="u"
+              cursor={"pointer"}
+            >
+              Terms & Conditions
+            </Text>
+          </Link>
+        </HStack>
+        <Text
+          fontWeight={400}
+          fontSize="14px"
+          lineHeight="17px"
+          color={useColorModeValue("whiteAlpha.900", "whiteAlpha.900")}
+        >
+          2025 VeCare. All rights reserved.
         </Text>
       </VStack>
     </VStack>
   );
 
   return (
-    <Flex bgColor={"gray.900"} color="gray.100">
+    <Flex
+      bgGradient={useColorModeValue(
+        "linear(to-r, primary.600, primary.500)",
+        "linear(to-r, primary.700, primary.600)"
+      )}
+      color="white"
+    >
       <Container
         maxW={"container.xl"}
         display={"flex"}
         alignItems={"stretch"}
         justifyContent={"flex-start"}
         flexDirection={"column"}
+        px={{ base: 4, md: 8 }}
       >
         <Show above="md">{desktopContent}</Show>
         <Show below="md">{mobileContent}</Show>
