@@ -83,13 +83,14 @@ export const CampaignBrowser = () => {
   }
 
   return (
-    <Box py={12}>
+    // Added extra top padding to avoid clipping under the navbar
+    <Box pt={{ base: 24, md: 28 }} pb={12}>
       <Container maxW="container.xl">
         <VStack spacing={8} align="stretch">
           {/* Header */}
           <VStack spacing={4} textAlign="center">
             <Heading size="2xl">Active Medical Campaigns</Heading>
-            <Text fontSize="lg" color="muted-text" maxW="2xl">
+            <Text fontSize="lg" color="gray.700" maxW="2xl">
               All campaigns are AI-verified for authenticity. Your donation goes
               directly to those in need and earns you B3tr tokens.
             </Text>
@@ -98,9 +99,9 @@ export const CampaignBrowser = () => {
           {/* Campaigns Grid */}
           {campaigns.length === 0 ? (
             <Center py={20}>
-                <VStack spacing={4}>
-                <Icon as={FaHeart} w={16} h={16} color="gray.300" />
-                <Text fontSize="xl" color="gray.500">
+              <VStack spacing={4}>
+                <Icon as={FaHeart} w={16} h={16} color="gray.700" />
+                <Text fontSize="xl" color="gray.700">
                   No active campaigns at the moment
                 </Text>
                 <Button
