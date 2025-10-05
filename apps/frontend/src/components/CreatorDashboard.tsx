@@ -93,7 +93,7 @@ export const CreatorDashboard = () => {
     return (
       <Center h="60vh">
         <VStack spacing={4}>
-          <Spinner size="xl" color="blue.500" thickness="4px" />
+          <Spinner size="xl" color="primary.500" thickness="4px" />
           <Text>Loading your profile...</Text>
         </VStack>
       </Center>
@@ -108,7 +108,7 @@ export const CreatorDashboard = () => {
           <Text fontSize="xl" color="gray.500">
             You haven't created any campaigns yet
           </Text>
-          <Button colorScheme="blue" onClick={() => navigate("/create")}>
+          <Button colorScheme="primary" onClick={() => navigate("/create") }>
             Create Your First Campaign
           </Button>
         </VStack>
@@ -181,11 +181,11 @@ export const CreatorDashboard = () => {
               <Stat>
                 <StatLabel>
                   <HStack>
-                    <Icon as={FaCheckCircle} color="blue.500" />
+                    <Icon as={FaCheckCircle} color="primary.500" />
                     <Text>Total Campaigns</Text>
                   </HStack>
                 </StatLabel>
-                <StatNumber fontSize="4xl" color="blue.600">
+                <StatNumber fontSize="4xl" color="primary.600">
                   {profile.totalCampaigns}
                 </StatNumber>
                 <StatHelpText>campaigns created</StatHelpText>
@@ -226,7 +226,7 @@ export const CreatorDashboard = () => {
           {/* Actions */}
           <HStack spacing={4}>
             <Button
-              colorScheme="blue"
+              colorScheme="primary"
               size="lg"
               onClick={() => navigate("/create")}
             >

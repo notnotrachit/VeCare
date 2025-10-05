@@ -1,20 +1,23 @@
 import { Box, Container, HStack, Image, useColorModeValue } from "@chakra-ui/react";
 import { ConnectWalletButton } from "./ConnectWalletButton";
 export const Navbar = () => {
-  const bg = useColorModeValue("rgba(255,255,255,0.72)", "rgba(10,10,10,0.6)");
-  const borderColor = useColorModeValue("rgba(16,24,40,0.04)", "rgba(255,255,255,0.04)");
+  // use the theme primary blue for a clearer, trustful navbar
+  const bg = useColorModeValue("primary.50", "primary.50");
+  const borderColor = useColorModeValue("primary.50", "primary.50");
+  const textColor = useColorModeValue("white", "white");
   return (
     <Box
       px={0}
-      position={"sticky"}
+      position={"fixed"}
       top={0}
-      zIndex={10}
-      py={4}
-      h={"auto"}
+      zIndex={20}
+      py={2}
+      h={"64px"}
       w={"full"}
       bg={bg}
-      backdropFilter="saturate(180%) blur(8px)"
-      style={{ WebkitBackdropFilter: "saturate(180%) blur(8px)" }}
+      color={textColor}
+      backdropFilter="saturate(120%) blur(6px)"
+      style={{ WebkitBackdropFilter: "saturate(120%) blur(6px)" }}
       borderBottomWidth={1}
       borderBottomColor={borderColor}
     >

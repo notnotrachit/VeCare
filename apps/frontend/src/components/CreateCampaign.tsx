@@ -300,7 +300,7 @@ export const CreateCampaign = () => {
                 {/* Submit Button */}
                 <Button
                   type="submit"
-                  colorScheme="blue"
+                  colorScheme="primary"
                   size="lg"
                   isLoading={loading}
                   loadingText="Creating Campaign..."

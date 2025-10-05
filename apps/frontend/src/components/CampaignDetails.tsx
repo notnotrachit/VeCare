@@ -398,7 +398,7 @@ export const CampaignDetails = () => {
               <Box>
                 <Progress
                   value={calculateProgress()}
-                  colorScheme="blue"
+                  colorScheme="primary"
                   size="lg"
                   borderRadius="full"
                 />
@@ -459,7 +459,7 @@ export const CampaignDetails = () => {
                     </VStack>
                   ) : canWithdraw() ? (
                     <VStack spacing={4} align="stretch">
-                      <Badge colorScheme="blue" fontSize="md" p={2}>
+                      <Badge colorScheme="primary" fontSize="md" p={2}>
                         💰 Ready to Withdraw
                       </Badge>
                       <Text fontSize="sm" color="muted-text">
@@ -482,7 +482,7 @@ export const CampaignDetails = () => {
                         </VStack>
                       </Box>
                       <Button
-                        colorScheme="green"
+                        colorScheme="primary"
                         size="lg"
                         onClick={handleWithdraw}
                         isLoading={withdrawing}
@@ -565,7 +565,7 @@ export const CampaignDetails = () => {
 
                   <Button
                     variant="outline"
-                    colorScheme="blue"
+                    colorScheme="primary"
                     onClick={() => navigate("/campaigns")}
                   >
                     Browse Other Campaigns
@@ -586,7 +586,7 @@ export const CampaignDetails = () => {
                     />
 
                     <Button
-                      colorScheme="blue"
+                      colorScheme="primary"
                       size="lg"
                       onClick={handleDonate}
                       isLoading={donating}

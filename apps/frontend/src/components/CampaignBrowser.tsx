@@ -98,13 +98,13 @@ export const CampaignBrowser = () => {
           {/* Campaigns Grid */}
           {campaigns.length === 0 ? (
             <Center py={20}>
-              <VStack spacing={4}>
+                <VStack spacing={4}>
                 <Icon as={FaHeart} w={16} h={16} color="gray.300" />
                 <Text fontSize="xl" color="gray.500">
                   No active campaigns at the moment
                 </Text>
                 <Button
-                  colorScheme="blue"
+                  colorScheme="primary"
                   onClick={() => navigate("/create")}
                 >
                   Create the First Campaign
@@ -158,12 +158,12 @@ export const CampaignBrowser = () => {
                             campaign.raisedAmount,
                             campaign.goalAmount
                           )}
-                          colorScheme="blue"
+                          colorScheme="primary"
                           borderRadius="full"
                           size="sm"
                         />
                         <HStack justify="space-between" fontSize="sm">
-                          <Text fontWeight="bold" color="blue.600">
+                          <Text fontWeight="bold" color="primary.600">
                             {campaign.raisedAmount} VET raised
                           </Text>
                           <Text color="gray.500">
@@ -179,7 +179,7 @@ export const CampaignBrowser = () => {
                         </Text>
                         <Button
                           size="sm"
-                          colorScheme="blue"
+                          colorScheme="primary"
                           onClick={(e) => {
                             e.stopPropagation();
                             navigate(`/campaigns/${campaign.id}`);

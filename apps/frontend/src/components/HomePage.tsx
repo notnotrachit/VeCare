@@ -61,9 +61,16 @@ export const HomePage = () => {
   return (
     <Box>
       {/* Hero Section */}
-      <Box bgGradient={bgGradient} py={{ base: 16, md: 24 }}>
+      <Box
+        bgGradient={bgGradient}
+        minH={{ base: "75vh", md: "85vh" }}
+        display="flex"
+        alignItems="center"
+        py={{ base: 8, md: 0 }}
+        pt={{ base: 20, md: 24 }}
+      >
         <Container maxW="container.xl">
-          <VStack spacing={8} textAlign="center">
+          <VStack spacing={{ base: 6, md: 10 }} textAlign="center" py={{ base: 8, md: 0 }}>
             <Badge colorScheme="primary" fontSize="md" px={4} py={2} borderRadius="full">
               AI-Verified Medical Crowdfunding
             </Badge>
@@ -174,7 +181,7 @@ export const HomePage = () => {
       </Box>
 
       {/* Stats Section */}
-      <Container maxW="container.xl" py={16}>
+      <Container maxW="full" py={16} bg="white">
         <SimpleGrid columns={{ base: 1, md: 3 }} spacing={8}>
           <VStack>
             <Heading size="2xl" color="primary.600">
