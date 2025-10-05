@@ -1,1 +1,1 @@
-export const backendURL = "http://localhost:3000"; // TODO change to your backend URL
+export const backendURL = "https://vecarebe.rcht.dev"; // TODO change to your backend URL
