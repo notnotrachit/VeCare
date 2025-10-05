@@ -4,7 +4,7 @@ import { ecoEarnContract } from '@/utils/thor';
 import { Service } from 'typedi';
 import * as console from 'node:console';
 import { unitsUtils } from '@vechain/sdk-core';
-import { REWARD_AMOUNT } from '@config';
+import { REWARD_AMOUNT } from '../config';
 @Service()
 export class ContractsService {
   public async registerSubmission(submission: Submission): Promise<boolean> {

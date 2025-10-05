@@ -1,3 +1,4 @@
+import './register-aliases';
 import { App } from '@/app';
 import { initializeOpenAI } from './utils/initializeOpenAI';
 import { SubmissionRoute } from './routes/submission.route';
