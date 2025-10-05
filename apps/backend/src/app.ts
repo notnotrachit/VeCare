@@ -86,3 +86,17 @@ export class App {
     this.app.use(bodyParser.urlencoded({ limit: MAX_FILE_SIZE, extended: true, parameterLimit: 50000 }));
   }
 }
+
+// Default export for serverless platforms (Vercel) that expect the module's
+// default export to be either a request handler function or an Express server.
+// We construct the app with the same routes used in `src/server.ts` so the
+// deployment runtime can import this module directly.
+import { SubmissionRoute } from '@routes/submission.route';
+import { CampaignRoute } from '@routes/campaign.route';
+
+const _defaultApp = new App([
+  new SubmissionRoute(),
+  new CampaignRoute(),
+]);
+
+export default _defaultApp.getServer();
