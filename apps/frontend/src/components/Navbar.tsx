@@ -1,4 +1,5 @@
-import { Box, Container, HStack, Image, useColorModeValue } from "@chakra-ui/react";
+import { Box, Container, HStack, useColorModeValue } from "@chakra-ui/react";
+import { Logo } from "./Logo";
 import { ConnectWalletButton } from "./ConnectWalletButton";
 export const Navbar = () => {
   // use the theme primary blue for a clearer, trustful navbar
@@ -31,7 +32,7 @@ export const Navbar = () => {
         px={{ base: 4, md: 8 }}
       >
         <HStack flex={1} justifyContent={"start"}>
-          <Image src="/vebetterdao-logo.svg" width={140}/>
+          <Logo variant="nav" />
         </HStack>
 
         <HStack flex={1} spacing={4} justifyContent={"end"}>

@@ -4,6 +4,10 @@ import { cardTheme } from "./card";
 import { ButtonStyle } from "./button";
 
 const themeConfig = {
+  fonts: {
+    heading: "'Red Hat Display', system-ui, -apple-system, 'Segoe UI', Roboto, Ubuntu, Cantarell, 'Helvetica Neue', Arial, 'Noto Sans', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'",
+    body: "'Red Hat Display', system-ui, -apple-system, 'Segoe UI', Roboto, Ubuntu, Cantarell, 'Helvetica Neue', Arial, 'Noto Sans', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'",
+  },
   components: {
     Card: cardTheme,
     Button: ButtonStyle,
@@ -44,6 +48,7 @@ const themeConfig = {
       body: {
         bg: "chakra-body-bg",
         color: "chakra-body-text",
+        fontFamily: "body",
         // Improve font rendering
         WebkitFontSmoothing: "antialiased",
         MozOsxFontSmoothing: "grayscale",

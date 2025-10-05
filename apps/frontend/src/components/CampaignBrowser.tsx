@@ -51,7 +51,7 @@ export const CampaignBrowser: React.FC = () => {
     else params.delete("filter");
     const newUrl = `${location.pathname}${params.toString() ? `?${params.toString()}` : ""}`;
     window.history.replaceState({}, "", newUrl);
-  }, [filter, location.pathname]);
+  }, [filter, location.pathname, location.search]);
 
   useEffect(() => {
     fetchCampaigns();

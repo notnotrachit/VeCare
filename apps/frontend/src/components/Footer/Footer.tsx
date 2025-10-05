@@ -12,14 +12,14 @@ import {
 } from "@chakra-ui/react";
 
 import { PRIVACY_POLICY_LINK, TERMS_AND_CONDITIONS_LINK } from "../../const";
-import { BeBetterVeBetterIcon } from "../Icon";
+import { Logo } from "../Logo";
 
 export const Footer: React.FC = () => {
   const desktopContent = (
     <Flex direction="row" align="stretch" justify="space-between" py={10} gap={8}>
-      {/* Left: Logo + legal links */}
+      {/* Left: Logo + brand + legal links */}
       <VStack align="start" spacing={6} flex="1">
-        <BeBetterVeBetterIcon />
+        <Logo variant="footer" />
         <HStack spacing={4}>
           <Link href={PRIVACY_POLICY_LINK} isExternal>
             <Text
@@ -79,9 +79,9 @@ export const Footer: React.FC = () => {
   );
 
   const mobileContent = (
-    <VStack spacing={8} py={10}>
+      <VStack spacing={8} py={10}>
       <VStack spacing={4}>
-        <BeBetterVeBetterIcon />
+        <Logo variant="footer" />
         <Text fontSize="2xl" fontWeight="bold" textAlign="center">Ready to make an impact?</Text>
         <Text fontSize="md" color={useColorModeValue("whiteAlpha.900", "whiteAlpha.900")} textAlign="center" maxW="xs">
           Support a verified campaign or start your own in minutes.
