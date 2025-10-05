@@ -46,5 +46,11 @@ export class CampaignRoute implements Routes {
 
     // Verify documents only (preview)
     this.router.post(`/verify-documents`, this.campaign.verifyDocuments);
+
+    // Upload to IPFS (helper endpoint for frontend)
+    this.router.post(`/campaigns/ipfs`, this.campaign.uploadToIPFS);
+
+    // Verify campaign on-chain (admin or auto-verification)
+    this.router.post(`/campaigns/:id/verify`, this.campaign.verifyCampaignOnChain);
   }
 }

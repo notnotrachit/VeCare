@@ -294,6 +294,50 @@ export class CampaignController {
   };
 
   /**
+   * @route   POST /campaigns/ipfs
+   * @desc    Upload campaign data to IPFS
+   * @access  Public
+   */
+  public uploadToIPFS = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const { documents, verificationResult, campaignTitle, creator, timestamp } = req.body;
+
+      if (!documents || !Array.isArray(documents)) {
+        throw new HttpException(400, 'Documents are required');
+      }
+
+      // Upload to IPFS with metadata
+      const ipfsHash = await uploadToIPFS(
+        {
+          documents,
+          verificationResult,
+          campaignTitle,
+          creator,
+          timestamp: timestamp || Date.now(),
+        },
+        {
+          name: `vecare-campaign-${campaignTitle?.substring(0, 30) || 'untitled'}`,
+          keyvalues: {
+            type: 'medical-campaign',
+            creator: creator || 'unknown',
+            verified: verificationResult?.isVerified?.toString() || 'false',
+            confidenceScore: verificationResult?.confidenceScore?.toString() || '0',
+          },
+        }
+      );
+
+      res.status(200).json({
+        success: true,
+        data: {
+          ipfsHash,
+        },
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  /**
    * @route   POST /campaigns/:id/verify
    * @desc    Manually verify a campaign on-chain (Admin only)
    * @access  Admin
