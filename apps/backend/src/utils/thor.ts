@@ -8,8 +8,4 @@ export const thor = new ThorClient(new HttpClient(NETWORK_URL), {
 
 const signer = new VeChainPrivateKeySigner(Buffer.from(ADMIN_PRIVATE_KEY), new VeChainProvider(thor));
 
-export const veCareContract = thor.contracts.load(
-  config.VECARE_CONTRACT_ADDRESS,
-  VECARE_SOL_ABI,
-  signer,
-);
+export const veCareContract = thor.contracts.load(config.VECARE_CONTRACT_ADDRESS, VECARE_SOL_ABI, signer);

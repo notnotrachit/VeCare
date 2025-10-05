@@ -1,9 +1,9 @@
 /**
  * IPFS Upload Utility using Pinata
- * 
+ *
  * Pinata is a reliable IPFS pinning service that ensures your data
  * remains available on the IPFS network.
- * 
+ *
  * Get your API keys at: https://app.pinata.cloud/
  */
 
@@ -45,22 +45,17 @@ function initializePinata() {
  * @param metadata - Optional metadata for the pin
  * @returns IPFS hash (CID)
  */
-export async function uploadToIPFS(
-  data: any,
-  metadata?: { name?: string; keyvalues?: Record<string, string> }
-): Promise<string> {
+export async function uploadToIPFS(data: any, metadata?: { name?: string; keyvalues?: Record<string, string> }): Promise<string> {
   const client = initializePinata();
 
   if (!client) {
-    throw new Error(
-      'Pinata not configured. Please set PINATA_API_KEY and PINATA_API_SECRET environment variables.'
-    );
+    throw new Error('Pinata not configured. Please set PINATA_API_KEY and PINATA_API_SECRET environment variables.');
   }
 
   try {
     // Prepare options with metadata
     const options: any = {};
-    
+
     if (metadata) {
       options.pinataMetadata = {
         name: metadata.name || `vecare-${Date.now()}`,
@@ -74,10 +69,10 @@ export async function uploadToIPFS(
     };
 
     logger.info('Uploading data to IPFS via Pinata...');
-    
+
     // Upload JSON to IPFS
     const result = await client.pinJSONToIPFS(data, options);
-    
+
     logger.info(`Successfully uploaded to IPFS: ${result.IpfsHash}`);
     logger.info(`Pin size: ${result.PinSize} bytes`);
     logger.info(`Timestamp: ${result.Timestamp}`);
@@ -167,11 +162,7 @@ export async function testPinataConnection(): Promise<boolean> {
  * Get pin list from Pinata (for monitoring)
  * @param filters - Optional filters for the pin list
  */
-export async function getPinList(filters?: {
-  status?: 'pinned' | 'unpinned';
-  pageLimit?: number;
-  pageOffset?: number;
-}): Promise<any> {
+export async function getPinList(filters?: { status?: 'pinned' | 'unpinned'; pageLimit?: number; pageOffset?: number }): Promise<any> {
   const client = initializePinata();
 
   if (!client) {

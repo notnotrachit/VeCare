@@ -45,10 +45,7 @@ if (DISABLE_LOGGING) {
   const logFormat = winston.format.printf(({ timestamp, level, message }) => `${timestamp} ${level}: ${message}`);
 
   logger = winston.createLogger({
-    format: winston.format.combine(
-      winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
-      logFormat,
-    ),
+    format: winston.format.combine(winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }), logFormat),
     transports: [],
   });
 
@@ -80,9 +77,7 @@ if (DISABLE_LOGGING) {
   }
 
   // Always add console transport so logs appear in stdout
-  logger.add(
-    new winston.transports.Console({ format: winston.format.combine(winston.format.splat(), winston.format.colorize()) }),
-  );
+  logger.add(new winston.transports.Console({ format: winston.format.combine(winston.format.splat(), winston.format.colorize()) }));
 
   stream = {
     write: (message: string) => {

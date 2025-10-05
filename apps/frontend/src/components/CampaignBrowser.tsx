@@ -78,7 +78,6 @@ export const CampaignBrowser: React.FC = () => {
       }
     } catch (err) {
       // keep empty list on error
-      // eslint-disable-next-line no-console
       console.error("Error fetching campaigns", err);
       setCampaigns([]);
     } finally {
