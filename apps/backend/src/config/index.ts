@@ -1,7 +1,11 @@
 import { config } from 'dotenv';
 import { mnemonic } from '@vechain/sdk-core';
 import { ValidateEnv } from '@utils/validateEnv';
-config({ path: `.env.${process.env.NODE_ENV || 'development'}.local` });
+
+// Load .env files only if they exist (can be disabled by setting SKIP_DOTENV=true)
+if (!process.env.SKIP_DOTENV) {
+  config({ path: `.env.${process.env.NODE_ENV || 'development'}.local` });
+}
 
 const validatedEnv = ValidateEnv();
 
